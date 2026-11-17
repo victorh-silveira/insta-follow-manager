@@ -33,24 +33,24 @@ export function AlphabetBar({
         key={key}
         type="button"
         onClick={() => onSelectBucket(key)}
-        className={`flex items-center justify-center gap-1.5 rounded-lg border text-xs font-semibold transition ${
-          wide ? "px-3 py-2" : "h-9 min-w-[2.4rem] px-2"
+        className={`flex items-center justify-center gap-1.5 rounded-xl border text-xs font-semibold transition ${
+          wide ? "px-3.5 py-2" : "h-9 min-w-[2.5rem] px-2"
         } ${
           isActive
-            ? "border-slate-900 bg-slate-900 text-white shadow-sm"
+            ? "border-transparent bg-gradient-to-r from-fuchsia-600 via-rose-500 to-amber-500 text-white shadow-md shadow-rose-500/20"
             : isEmpty
-              ? "border-slate-100 bg-slate-50 text-slate-300 hover:border-slate-200 hover:text-slate-500"
-              : "border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50"
+              ? "border-slate-100 bg-slate-50/80 text-slate-300 hover:border-slate-200 hover:text-slate-500"
+              : "border-slate-200 bg-white text-slate-700 hover:border-fuchsia-300 hover:bg-fuchsia-50/60 hover:text-fuchsia-800"
         }`}
       >
         <span>{label}</span>
         <span
-          className={`rounded-full px-1.5 py-0.5 text-[10px] ${
+          className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
             isActive
-              ? "bg-white/20 text-white"
+              ? "bg-white/25 text-white"
               : isEmpty
                 ? "text-slate-300"
-                : "bg-slate-100 text-slate-500"
+                : "bg-fuchsia-50 text-fuchsia-700"
           }`}
         >
           {count}
@@ -62,12 +62,21 @@ export function AlphabetBar({
   return (
     <section
       aria-label="Filtro alfabético por nome de exibição"
-      className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+      className="rounded-2xl border border-rose-100/80 bg-white/90 p-4 shadow-sm backdrop-blur-sm"
     >
-      <div className="mb-3 flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-xs font-bold uppercase tracking-wider text-fuchsia-700/80">
           Filtrar por inicial do nome (A–Z, 0–9, Caracteres Especiais)
         </span>
+        {selectedBucket !== "ALL" && (
+          <button
+            type="button"
+            onClick={() => onSelectBucket("ALL")}
+            className="text-xs font-semibold text-rose-600 transition hover:text-rose-700 hover:underline"
+          >
+            Ver todos ({totalInList})
+          </button>
+        )}
       </div>
       <div className="flex flex-wrap gap-1.5">
         {renderButton("ALL", "Todos", totalInList, true)}
