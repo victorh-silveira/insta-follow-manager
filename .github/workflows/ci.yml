@@ -33,11 +33,11 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
       - name: Commitlint (Conventional Commits)
@@ -59,9 +59,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Instalar dependencias Python
@@ -87,9 +87,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: "npm"
@@ -114,9 +114,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: "npm"
@@ -141,9 +141,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: "npm"
@@ -168,9 +168,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: "npm"
@@ -195,9 +195,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Instalar Hadolint
@@ -223,9 +223,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Shell | Lint
@@ -245,9 +245,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: JSON | Lint
@@ -267,9 +267,9 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Instalar PyYAML e Yamllint
@@ -291,7 +291,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Workflows | Lint
         uses: ./.github/actions/ci/workflows
 
@@ -314,7 +314,7 @@ jobs:
       published: ${{ steps.after_tag.outputs.published }}
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -370,7 +370,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Obter codigo fonte
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Resumo | Pipeline
         uses: ./.github/actions/shared/pipeline-summary
         with:
