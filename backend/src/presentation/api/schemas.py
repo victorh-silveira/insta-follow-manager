@@ -41,3 +41,21 @@ class UnfollowResponse(BaseModel):
     username: str
     full_name: str
     unfollowed: bool
+
+
+class LoginRequest(BaseModel):
+    """Credentials payload sent from the frontend login form."""
+
+    username: str
+    password: str
+    verification_code: str | None = None
+
+
+class AuthStatusResponse(BaseModel):
+    """Authenticated Instagram session status."""
+
+    authenticated: bool
+    gateway_mode: str
+    username: str | None = None
+    full_name: str | None = None
+    profile_pic_url: str | None = None

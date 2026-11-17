@@ -61,3 +61,14 @@ class UnfollowResultDTO:
     username: str
     full_name: str
     unfollowed: bool
+
+
+@dataclass(frozen=True)
+class AuthStatusDTO:
+    """Authentication status of the active Instagram session."""
+
+    authenticated: bool
+    gateway_mode: str
+    username: str | None = None
+    full_name: str | None = None
+    profile_pic_url: str | None = None

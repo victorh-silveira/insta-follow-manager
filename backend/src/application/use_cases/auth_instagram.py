@@ -1,0 +1,91 @@
+"""Use cases for Instagram authentication and session management."""
+
+import logging
+
+from src.application.dto.profile_dto import AuthStatusDTO
+from src.application.event_logger import emit_event
+from src.domain.gateways.instagram_gateway import AuthAccount, InstagramGateway
+
+logger = logging.getLogger(__name__)
+
+
+def _to_dto(account: AuthAccount, gateway_mode: str) -> AuthStatusDTO:
+    return AuthStatusDTO(
+        authenticated=account.is_authenticated,
+        gateway_mode=gateway_mode,
+        username=account.username,
+        full_name=account.full_name,
+        profile_pic_url=account.profile_pic_url,
+    )
+
+
+class GetAuthStatusUseCase:
+    """Checks current Instagram session status."""
+
+    def __init__(self, gateway: InstagramGateway) -> None:
+        self._gateway = gateway
+
+    def execute(self) -> AuthStatusDTO:
+        account = self._gateway.get_auth_status()
+        return _to_dto(account, self._gateway.mode_name)
+
+
+class LoginInstagramUseCase:
+    """Authenticates a user with Instagram and persists session."""
+
+    def __init__(self, gateway: InstagramGateway) -> None:
+        self._gateway = gateway
+
+    def execute(
+        self,
+        username: str,
+        password: str,
+        verification_code: str | None = None,
+    ) -> AuthStatusDTO:
+        cleaned_user = username.strip().lstrip("@")
+        if not cleaned_user or not password:
+            raise ValueError("Usuario e senha do Instagram sao obrigatorios.")
+
+        emit_event(
+            logger,
+            logging.INFO,
+            "auth.instagram.login_started",
+            "Authenticating Instagram account",
+            username=cleaned_user,
+            gateway_mode=self._gateway.mode_name,
+        )
+        account = self._gateway.login(
+            username=cleaned_user,
+            password=password,
+            verification_code=verification_code.strip() if verification_code else None,
+        )
+        emit_event(
+            logger,
+            logging.INFO,
+            "auth.instagram.login_succeeded",
+            "Instagram account authenticated",
+            username=account.username,
+            gateway_mode=self._gateway.mode_name,
+        )
+        return _to_dto(account, self._gateway.mode_name)
+
+
+class LogoutInstagramUseCase:
+    """Logs out and clears persisted Instagram session."""
+
+    def __init__(self, gateway: InstagramGateway) -> None:
+        self._gateway = gateway
+
+    def execute(self) -> AuthStatusDTO:
+        self._gateway.logout()
+        emit_event(
+            logger,
+            logging.INFO,
+            "auth.instagram.logged_out",
+            "Instagram session cleared",
+            gateway_mode=self._gateway.mode_name,
+        )
+        return AuthStatusDTO(
+            authenticated=False,
+            gateway_mode=self._gateway.mode_name,
+        )

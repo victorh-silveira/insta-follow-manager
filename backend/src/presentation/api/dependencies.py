@@ -2,6 +2,11 @@
 
 from functools import lru_cache
 
+from src.application.use_cases.auth_instagram import (
+    GetAuthStatusUseCase,
+    LoginInstagramUseCase,
+    LogoutInstagramUseCase,
+)
 from src.application.use_cases.list_profiles_by_bucket import ListProfilesByBucketUseCase
 from src.application.use_cases.sync_relationships import SyncRelationshipsUseCase
 from src.application.use_cases.unfollow_profile import UnfollowProfileUseCase
@@ -50,3 +55,15 @@ def get_list_profiles_use_case() -> ListProfilesByBucketUseCase:
 
 def get_unfollow_use_case() -> UnfollowProfileUseCase:
     return UnfollowProfileUseCase(get_instagram_gateway(), get_profile_repository())
+
+
+def get_auth_status_use_case() -> GetAuthStatusUseCase:
+    return GetAuthStatusUseCase(get_instagram_gateway())
+
+
+def get_login_use_case() -> LoginInstagramUseCase:
+    return LoginInstagramUseCase(get_instagram_gateway())
+
+
+def get_logout_use_case() -> LogoutInstagramUseCase:
+    return LogoutInstagramUseCase(get_instagram_gateway())

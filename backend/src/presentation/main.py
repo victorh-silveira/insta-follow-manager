@@ -8,15 +8,18 @@ from fastapi.responses import JSONResponse
 
 from src.application.event_logger import emit_event
 from src.domain.exceptions import (
+    ChallengeRequiredError,
     GatewayAuthError,
     GatewayError,
     NotFollowingError,
     ProfileNotFoundError,
     RateLimitError,
+    TwoFactorRequiredError,
 )
 from src.infrastructure.config.settings import get_settings
 from src.infrastructure.logging.semantic_logger import configure_logging
 from src.presentation.api.middleware.request_logging import RequestLoggingMiddleware
+from src.presentation.api.routes.auth import router as auth_router
 from src.presentation.api.routes.health import router as health_router
 from src.presentation.api.routes.relationships import router as relationships_router
 
@@ -44,6 +47,7 @@ def create_app() -> FastAPI:
     )
 
     _register_exception_handlers(app)
+    app.include_router(auth_router)
     app.include_router(health_router)
     app.include_router(relationships_router)
     return app
@@ -59,6 +63,16 @@ def _register_exception_handlers(app: FastAPI) -> None:
     async def handle_not_following(_: Request, exc: NotFollowingError) -> JSONResponse:
         emit_event(logger, logging.WARNING, "api.domain_error", str(exc), error="NotFollowingError")
         return JSONResponse(status_code=400, content={"detail": str(exc)})
+
+    @app.exception_handler(TwoFactorRequiredError)
+    async def handle_two_factor(_: Request, exc: TwoFactorRequiredError) -> JSONResponse:
+        emit_event(logger, logging.WARNING, "api.two_factor_required", str(exc))
+        return JSONResponse(status_code=401, content={"detail": str(exc), "requires_2fa": True})
+
+    @app.exception_handler(ChallengeRequiredError)
+    async def handle_challenge(_: Request, exc: ChallengeRequiredError) -> JSONResponse:
+        emit_event(logger, logging.WARNING, "api.challenge_required", str(exc))
+        return JSONResponse(status_code=401, content={"detail": str(exc), "requires_challenge": True})
 
     @app.exception_handler(GatewayAuthError)
     async def handle_auth_error(_: Request, exc: GatewayAuthError) -> JSONResponse:

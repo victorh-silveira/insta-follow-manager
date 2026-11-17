@@ -1,6 +1,10 @@
 """In-memory mock Instagram gateway for safe local development and testing."""
 
-from src.domain.gateways.instagram_gateway import GatewayProfile, InstagramGateway
+from src.domain.gateways.instagram_gateway import (
+    AuthAccount,
+    GatewayProfile,
+    InstagramGateway,
+)
 
 _INITIAL_FOLLOWING: list[GatewayProfile] = [
     GatewayProfile(pk="101", username="ana.julia.dev", full_name="Ana Julia", is_verified=False),
@@ -50,10 +54,34 @@ class MockInstagramGateway(InstagramGateway):
     def __init__(self) -> None:
         self._following: dict[str, GatewayProfile] = {p.pk: p for p in _INITIAL_FOLLOWING}
         self._followers: dict[str, GatewayProfile] = {p.pk: p for p in _INITIAL_FOLLOWERS}
+        self._authenticated = True
+        self._username = "demo.manager"
 
     @property
     def mode_name(self) -> str:
         return "mock"
+
+    def get_auth_status(self) -> AuthAccount:
+        if not self._authenticated:
+            return AuthAccount(is_authenticated=False)
+        return AuthAccount(
+            is_authenticated=True,
+            username=self._username,
+            full_name="Conta Demo",
+        )
+
+    def login(
+        self,
+        username: str,
+        password: str,
+        verification_code: str | None = None,
+    ) -> AuthAccount:
+        self._authenticated = True
+        self._username = username
+        return self.get_auth_status()
+
+    def logout(self) -> None:
+        self._authenticated = False
 
     def fetch_following(self) -> list[GatewayProfile]:
         return list(self._following.values())

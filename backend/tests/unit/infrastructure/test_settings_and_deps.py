@@ -27,4 +27,7 @@ def test_get_instagram_gateway_instagrapi_branch(
     monkeypatch.setattr(dependencies, "get_settings", lambda: custom_settings)
     gw = dependencies.get_instagram_gateway()
     assert isinstance(gw, InstagrapiGateway)
+    assert dependencies.get_auth_status_use_case() is not None
+    assert dependencies.get_login_use_case() is not None
+    assert dependencies.get_logout_use_case() is not None
     dependencies.get_instagram_gateway.cache_clear()

@@ -5,8 +5,19 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 import pytest
 
+from src.application.use_cases.auth_instagram import (
+    GetAuthStatusUseCase,
+    LoginInstagramUseCase,
+    LogoutInstagramUseCase,
+)
 from src.application.use_cases.sync_relationships import SyncRelationshipsUseCase
-from src.domain.exceptions import GatewayAuthError, GatewayError, RateLimitError
+from src.domain.exceptions import (
+    ChallengeRequiredError,
+    GatewayAuthError,
+    GatewayError,
+    RateLimitError,
+    TwoFactorRequiredError,
+)
 from src.infrastructure.gateways.mock_instagram_gateway import MockInstagramGateway
 from src.infrastructure.persistence.database import SQLiteDatabase
 from src.infrastructure.persistence.sqlite_profile_repository import SQLiteProfileRepository
@@ -145,3 +156,55 @@ def test_unhandled_exception_logged_by_middleware(tmp_path: Path) -> None:
 
     resp = tc.post("/api/relationships/sync")
     assert resp.status_code == 500
+
+
+def test_auth_endpoints_status_login_logout(tmp_path: Path) -> None:
+    gateway = MockInstagramGateway()
+    app = create_app()
+    app.dependency_overrides[dependencies.get_auth_status_use_case] = lambda: GetAuthStatusUseCase(
+        gateway
+    )
+    app.dependency_overrides[dependencies.get_login_use_case] = lambda: LoginInstagramUseCase(gateway)
+    app.dependency_overrides[dependencies.get_logout_use_case] = lambda: LogoutInstagramUseCase(gateway)
+    tc = TestClient(app)
+
+    status_resp = tc.get("/api/auth/status")
+    assert status_resp.status_code == 200
+    assert status_resp.json()["authenticated"] is True
+
+    logout_resp = tc.post("/api/auth/logout")
+    assert logout_resp.status_code == 200
+    assert logout_resp.json()["authenticated"] is False
+
+    assert tc.get("/api/auth/status").json()["authenticated"] is False
+
+    login_resp = tc.post(
+        "/api/auth/login",
+        json={"username": "victor.insta", "password": "secret"},
+    )
+    assert login_resp.status_code == 200
+    assert login_resp.json()["authenticated"] is True
+    assert login_resp.json()["username"] == "victor.insta"
+
+
+@pytest.mark.parametrize(
+    ("exc", "expected_flag"),
+    [
+        (TwoFactorRequiredError("2fa needed"), "requires_2fa"),
+        (ChallengeRequiredError("checkpoint"), "requires_challenge"),
+    ],
+)
+def test_auth_login_2fa_and_challenge_responses(exc: Exception, expected_flag: str) -> None:
+    class AuthErrorGateway(MockInstagramGateway):
+        def login(self, username: str, password: str, verification_code: str | None = None):  # type: ignore[override]
+            raise exc
+
+    app = create_app()
+    app.dependency_overrides[dependencies.get_login_use_case] = lambda: LoginInstagramUseCase(
+        AuthErrorGateway()
+    )
+    tc = TestClient(app)
+
+    resp = tc.post("/api/auth/login", json={"username": "u", "password": "p"})
+    assert resp.status_code == 401
+    assert resp.json()[expected_flag] is True

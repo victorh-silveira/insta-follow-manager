@@ -21,5 +21,13 @@ class GatewayAuthError(GatewayError):
     """Raised when Instagram authentication or session validation fails."""
 
 
+class TwoFactorRequiredError(GatewayAuthError):
+    """Raised when Instagram requires a 2FA verification code to complete login."""
+
+
+class ChallengeRequiredError(GatewayAuthError):
+    """Raised when Instagram triggers a security challenge/checkpoint approval."""
+
+
 class RateLimitError(GatewayError):
     """Raised when Instagram rate limits or blocks the request."""

@@ -13,7 +13,7 @@ services:
       - path: ./backend/.env
         required: false
     environment:
-      INSTAGRAM_GATEWAY: ${INSTAGRAM_GATEWAY:-mock}
+      INSTAGRAM_GATEWAY: ${INSTAGRAM_GATEWAY:-instagrapi}
       DATABASE_URL: sqlite:////app/data/insta_manager.db
       IG_SESSION_PATH: /app/data/session.json
       CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000

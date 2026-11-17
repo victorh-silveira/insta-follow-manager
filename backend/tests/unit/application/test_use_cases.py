@@ -2,6 +2,11 @@
 
 import pytest
 
+from src.application.use_cases.auth_instagram import (
+    GetAuthStatusUseCase,
+    LoginInstagramUseCase,
+    LogoutInstagramUseCase,
+)
 from src.application.use_cases.list_profiles_by_bucket import ListProfilesByBucketUseCase
 from src.application.use_cases.sync_relationships import SyncRelationshipsUseCase
 from src.application.use_cases.unfollow_profile import UnfollowProfileUseCase
@@ -11,7 +16,11 @@ from src.domain.exceptions import (
     NotFollowingError,
     ProfileNotFoundError,
 )
-from src.domain.gateways.instagram_gateway import GatewayProfile, InstagramGateway
+from src.domain.gateways.instagram_gateway import (
+    AuthAccount,
+    GatewayProfile,
+    InstagramGateway,
+)
 from src.domain.repositories.profile_repository import (
     ProfileRepository,
     RelationshipListType,
@@ -64,10 +73,21 @@ class FakeInstagramGateway(InstagramGateway):
     def __init__(self, should_fail_unfollow: bool = False) -> None:
         self.unfollowed_pks: list[str] = []
         self.should_fail_unfollow = should_fail_unfollow
+        self.authenticated = True
 
     @property
     def mode_name(self) -> str:
         return "fake"
+
+    def get_auth_status(self) -> AuthAccount:
+        return AuthAccount(is_authenticated=self.authenticated, username="fake_user")
+
+    def login(self, username: str, password: str, verification_code: str | None = None) -> AuthAccount:
+        self.authenticated = True
+        return AuthAccount(is_authenticated=True, username=username)
+
+    def logout(self) -> None:
+        self.authenticated = False
 
     def fetch_following(self) -> list[GatewayProfile]:
         return [
@@ -181,3 +201,19 @@ def test_list_profiles_all_bucket_and_invalid_bucket() -> None:
 
     with pytest.raises(ValueError, match="Unsupported bucket filter"):
         use_case.execute(list_type=RelationshipListType.FOLLOWING, bucket="INVALID")
+
+
+def test_auth_use_cases_lifecycle() -> None:
+    gateway = FakeInstagramGateway()
+    status = GetAuthStatusUseCase(gateway).execute()
+    assert status.authenticated is True
+
+    logged_out = LogoutInstagramUseCase(gateway).execute()
+    assert logged_out.authenticated is False
+
+    logged_in = LoginInstagramUseCase(gateway).execute("@victor.dev", "secret")
+    assert logged_in.authenticated is True
+    assert logged_in.username == "victor.dev"
+
+    with pytest.raises(ValueError):
+        LoginInstagramUseCase(gateway).execute("   ", "")

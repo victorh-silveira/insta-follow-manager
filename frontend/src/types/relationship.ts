@@ -43,3 +43,17 @@ export interface HealthResponse {
   status: string;
   gateway_mode: string;
 }
+
+export interface AuthStatus {
+  authenticated: boolean;
+  gateway_mode: string;
+  username: string | null;
+  full_name: string | null;
+  profile_pic_url: string | null;
+}
+
+export interface LoginPayload {
+  username: string;
+  password: string;
+  verification_code?: string;
+}
