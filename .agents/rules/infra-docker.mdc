@@ -1,0 +1,10 @@
+---
+description: Padroes seniores para Dockerfiles e docker-compose.yml.
+alwaysApply: true
+---
+
+# Infraestrutura Docker Senior
+
+- Todos os Dockerfiles devem usar multi-stage build, imagens base com tag fixa, usuario `non-root` (`USER`), `tini` para PID 1 e `CMD` na forma exec.
+- Nunca gravar segredos em `ENV`, `ARG` ou `COPY`.
+- `docker-compose.yml` deve usar `healthcheck` real, `depends_on` com `condition: service_healthy`, bind em `127.0.0.1`, rede isolada e limites de recursos.

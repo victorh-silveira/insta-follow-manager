@@ -1,0 +1,131 @@
+name: CI/CD - Pipeline Principal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/**"
+      - ".pre-commit-config.yaml"
+      - "linters/**"
+      - "scripts/**"
+      - "backend/**"
+      - "frontend/**"
+      - "docker-compose.yml"
+      - "Makefile"
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  commitlint:
+    name: CI - Commitlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Commitlint | Conventional Commits
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            npx --yes -p @commitlint/cli -p @commitlint/config-conventional commitlint --config linters/commitlint.config.mjs --from "origin/${{ github.base_ref }}" --to "HEAD" --verbose
+          else
+            git log -1 --pretty=format:"%B" | npx --yes -p @commitlint/cli -p @commitlint/config-conventional commitlint --config linters/commitlint.config.mjs --verbose
+          fi
+
+  python:
+    name: CI - Python
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Instalar dependencias Python
+        shell: bash
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/bin/pip install --upgrade pip
+          backend/.venv/bin/pip install -r backend/requirements.txt ruff bandit
+      - name: Python | Lint
+        shell: bash
+        run: python scripts/operations/ci_runner.py --area python --stage lint
+      - name: Python | Validate
+        shell: bash
+        run: python scripts/operations/ci_runner.py --area python --stage validate
+      - name: Python | Seguranca
+        shell: bash
+        run: python scripts/operations/ci_runner.py --area python --stage security
+      - name: Python | Testes
+        shell: bash
+        run: python scripts/operations/ci_runner.py --area python --stage test --coverage-fail-under 80
+      - name: Python | Build
+        shell: bash
+        run: python scripts/operations/ci_runner.py --area python --stage build
+
+  frontend:
+    name: CI - Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+      - name: Instalar dependencias Frontend
+        working-directory: frontend
+        run: npm ci
+      - name: Frontend | Lint
+        run: python scripts/operations/ci_runner.py --area frontend --stage lint
+      - name: Frontend | Validate
+        run: python scripts/operations/ci_runner.py --area frontend --stage validate
+      - name: Frontend | Seguranca
+        run: python scripts/operations/ci_runner.py --area frontend --stage security
+      - name: Frontend | Build
+        run: python scripts/operations/ci_runner.py --area frontend --stage build
+
+  docker:
+    name: CI - Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Instalar Hadolint
+        shell: bash
+        run: |
+          curl -fsSL -o /tmp/hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+          chmod +x /tmp/hadolint
+          sudo mv /tmp/hadolint /usr/local/bin/hadolint
+      - name: Docker | Lint
+        run: python scripts/operations/ci_runner.py --area docker --stage lint
+      - name: Docker | Validate
+        run: python scripts/operations/ci_runner.py --area docker --stage validate
+      - name: Docker | Seguranca
+        run: python scripts/operations/ci_runner.py --area docker --stage security
+      - name: Docker | Build
+        run: python scripts/operations/ci_runner.py --area docker --stage build

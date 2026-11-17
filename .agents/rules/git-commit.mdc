@@ -1,0 +1,10 @@
+---
+description: Padrao obrigatorio de Conventional Commits em PT-BR.
+alwaysApply: true
+---
+
+# Contrato de Commits (PT-BR)
+
+- Toda mensagem de commit deve seguir `tipo(escopo): assunto em portugues`.
+- Escopos validos estao definidos em `linters/commitlint.config.mjs`.
+- Assuntos com verbos em ingles (`add`, `fix`, `update`, `remove`, etc.) sao bloqueados pelo commitlint.

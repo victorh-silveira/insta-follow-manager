@@ -1,0 +1,27 @@
+# Python
+backend/.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+*.sqlite3
+.coverage
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+backend/.env
+backend/session.json
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env*.local
+linters/node_modules/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

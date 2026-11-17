@@ -1,0 +1,10 @@
+[tool.ruff]
+target-version = "py313"
+line-length = 105
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["B008"]
+
+[tool.ruff.lint.isort]
+force-sort-within-sections = true

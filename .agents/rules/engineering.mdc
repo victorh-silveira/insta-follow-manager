@@ -1,0 +1,10 @@
+---
+description: Padroes gerais de engenharia, qualidade e paridade Pre-Commit x CI/CD.
+alwaysApply: true
+---
+
+# Engenharia e Paridade Local <-> CI
+
+- Qualquer alteracao deve manter paridade entre `.pre-commit-config.yaml`, `Makefile` e `.github/workflows/ci.yml` atraves de `scripts/operations/ci_runner.py`.
+- Nunca commitar arquivos `.env`, `session.json`, bancos `*.db` ou segredos reais.
+- Manter `.env.example` atualizado sempre que novas variaveis de ambiente forem introduzidas.

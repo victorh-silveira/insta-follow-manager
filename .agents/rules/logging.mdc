@@ -1,0 +1,12 @@
+---
+description: Padroes de logging semantico estruturado, rastreabilidade e seguranca.
+alwaysApply: true
+---
+
+# Logging Semantico Estruturado
+
+- Todos os logs devem sair em `stdout` via `SemanticJsonFormatter` (`LOG_FORMAT=json`) ou `SemanticConsoleFormatter` (`LOG_FORMAT=console`), sem arquivos `.log` locais.
+- Usar `emit_event(logger, level, event, message, **fields)` com nomes de eventos em `dominio.acao.resultado` (ex.: `relationships.unfollow.succeeded`, `http.request.completed`).
+- Zero emojis em mensagens de log.
+- Nunca registrar senhas, cookies ou tokens (chaves sensiveis sao automaticamente mascaradas pelo formatter).
+- Propagar `request_id` via `RequestLoggingMiddleware` e `contextvars`.

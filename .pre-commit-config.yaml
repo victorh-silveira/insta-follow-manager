@@ -1,0 +1,96 @@
+minimum_pre_commit_version: "3.5.0"
+fail_fast: true
+
+default_language_version:
+  python: python3.13
+
+repos:
+  - repo: local
+    hooks:
+      - id: commitlint
+        name: Commitlint | Conventional Commits
+        entry: >-
+          npx --yes -p @commitlint/cli -p @commitlint/config-conventional
+          commitlint --config linters/commitlint.config.mjs --edit
+        language: system
+        stages: [commit-msg]
+
+      - id: python-lint
+        name: Python | Lint
+        entry: python scripts/operations/ci_runner.py --area python --stage lint
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: python-validate
+        name: Python | Validate
+        entry: python scripts/operations/ci_runner.py --area python --stage validate
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: python-security
+        name: Python | Seguranca
+        entry: python scripts/operations/ci_runner.py --area python --stage security
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: python-test
+        name: Python | Testes
+        entry: python scripts/operations/ci_runner.py --area python --stage test --coverage-fail-under 80
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: python-build
+        name: Python | Build
+        entry: python scripts/operations/ci_runner.py --area python --stage build
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: frontend-lint
+        name: Frontend | Lint
+        entry: python scripts/operations/ci_runner.py --area frontend --stage lint
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: frontend-validate
+        name: Frontend | Validate
+        entry: python scripts/operations/ci_runner.py --area frontend --stage validate
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: frontend-build
+        name: Frontend | Build
+        entry: python scripts/operations/ci_runner.py --area frontend --stage build
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: docker-lint
+        name: Docker | Lint
+        entry: python scripts/operations/ci_runner.py --area docker --stage lint
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: docker-validate
+        name: Docker | Validate
+        entry: python scripts/operations/ci_runner.py --area docker --stage validate
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]

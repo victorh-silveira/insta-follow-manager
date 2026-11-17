@@ -1,0 +1,11 @@
+---
+description: Diretrizes de DDD, Clean Architecture e SOLID para o projeto.
+alwaysApply: true
+---
+
+# Arquitetura Senior (DDD + Clean Architecture + SOLID)
+
+- A camada `backend/src/domain/` nao pode importar bibliotecas de infraestrutura ou apresentacao (`fastapi`, `sqlite3`, `instagrapi`, `pydantic`).
+- Toda integracao externa (Instagram API, banco de dados) deve ser abstraida por interfaces em `domain/gateways/` e `domain/repositories/`.
+- Casos de uso em `backend/src/application/use_cases/` orquestram apenas entidades, DTOs e portas do dominio.
+- Regras de categorizacao (`NameBucket`: `A-Z`, `0-9`, `SPECIAL` pelo `full_name`) residem exclusivamente no dominio.
