@@ -1,3 +1,26 @@
+## 1.0.0 (2026-11-17)
+
+### Funcionalidades
+
+* **all:** estrutura inicial do gerenciador de seguidores com DDD, Docker e CI ([36e5207](https://github.com/victorh-silveira/insta-follow-manager/commit/36e52076527ec6dddc1ee579e553cfb748bb5d71))
+
+### Correcoes de Bug
+
+* **ci:** audita apenas dependencias de producao no Next.js Seguranca ([42647a3](https://github.com/victorh-silveira/insta-follow-manager/commit/42647a3e402d55990707b308a534e0a52efdc0e1))
+* **ci:** corrige escopo do gitleaks e elimina interpolacao SQL no repositorio ([d360094](https://github.com/victorh-silveira/insta-follow-manager/commit/d36009429101f295bd2d03c8c01a5a7fe33b67d0))
+* **ci:** corrige TypeScript Validate e Hadolint nos Dockerfiles ([33b8539](https://github.com/victorh-silveira/insta-follow-manager/commit/33b8539dd840692cf78438eb74031f0873e1d0cc))
+* **scripts:** adiciona suporte a venv isolada no WSL ([3724bfd](https://github.com/victorh-silveira/insta-follow-manager/commit/3724bfd4934e90ea47c7629781caabc2b58a06d6))
+* **scripts:** resolve python por SO e usa caminhos relativos no YAML lint ([b0064b6](https://github.com/victorh-silveira/insta-follow-manager/commit/b0064b6bbdb84869aae15d622b834ca439054b87))
+
+### Refatoracoes Tecnicas
+
+* **ci:** desdobra gates por tecnologia em clean_workspace, pre-commit e CI ([6e559ae](https://github.com/victorh-silveira/insta-follow-manager/commit/6e559ae50193dfb766ef58ce955ccd2a3152ff81))
+
+### Documentacao
+
+* **repo:** adiciona badges seniores e aprimora arquivos markdown ([eccbfc4](https://github.com/victorh-silveira/insta-follow-manager/commit/eccbfc40ee12d5361c89323c887acab6de3e2654))
+* **repo:** corrige visualizacao de pastas colapsadas no GitHub ([a3244fc](https://github.com/victorh-silveira/insta-follow-manager/commit/a3244fc3f7dfa3266c91c3458f51f1422988837b))
+
 # Changelog
 
 ## [1.0.0] - 2026-11-17
