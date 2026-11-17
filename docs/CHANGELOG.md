@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.1.0...v1.1.1) (2026-11-17)
+
+### Correcoes de Bug
+
+* **all:** eliminar warnings de tini, starlette e actions node20 ([7695003](https://github.com/victorh-silveira/insta-follow-manager/commit/7695003af34583958bc7e39e4f34057306b6a811))
+
 ## [1.1.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.0.0...v1.1.0) (2026-11-17)
 
 ### Funcionalidades
