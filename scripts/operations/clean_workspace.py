@@ -142,6 +142,9 @@ def run_typescript(stage: str) -> int:
     if stage != "validate":
         return 0
     npx_cmd = "npx.cmd" if sys.platform == "win32" else "npx"
+    rc = run_cmd([npx_cmd, "next", "typegen"], FRONTEND_DIR)
+    if rc != 0:
+        return rc
     return run_cmd([npx_cmd, "tsc", "--noEmit"], FRONTEND_DIR)
 
 

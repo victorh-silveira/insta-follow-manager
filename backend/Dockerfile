@@ -1,9 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
-ARG PYTHON_IMAGE=python:3.13.9-slim-bookworm
-
 # --- Stage 1: Dependency Builder ---
-FROM ${PYTHON_IMAGE} AS builder
+FROM python:3.13.9-slim-bookworm AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -16,10 +14,10 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --no-cache-dir pip==26.3 && pip install --no-cache-dir -r requirements.txt
 
 # --- Stage 2: Minimal Non-Root Runtime ---
-FROM ${PYTHON_IMAGE} AS runtime
+FROM python:3.13.9-slim-bookworm AS runtime
 
 ARG APP_UID=10001
 ARG APP_GID=10001
@@ -29,6 +27,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PATH="/opt/venv/bin:$PATH"
 
 # Install tini for proper PID 1 signal forwarding & zombie reaping
+# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends tini \
     && rm -rf /var/lib/apt/lists/*

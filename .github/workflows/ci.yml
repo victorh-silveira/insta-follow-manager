@@ -1,5 +1,8 @@
 name: CI/CD - Pipeline Principal
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     branches: [main]
@@ -41,9 +44,13 @@ jobs:
         shell: bash
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            npx --yes -p @commitlint/cli -p @commitlint/config-conventional commitlint --config linters/commitlint.config.mjs --from "origin/${{ github.base_ref }}" --to "HEAD" --verbose
+            npx --yes -p @commitlint/cli -p @commitlint/config-conventional \
+              commitlint --config linters/commitlint.config.mjs \
+              --from "origin/${{ github.base_ref }}" --to "HEAD" --verbose
           else
-            git log -1 --pretty=format:"%B" | npx --yes -p @commitlint/cli -p @commitlint/config-conventional commitlint --config linters/commitlint.config.mjs --verbose
+            git log -1 --pretty=format:"%B" | npx --yes -p @commitlint/cli \
+              -p @commitlint/config-conventional commitlint \
+              --config linters/commitlint.config.mjs --verbose
           fi
 
   python:

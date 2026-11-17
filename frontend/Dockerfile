@@ -1,16 +1,14 @@
 # syntax=docker/dockerfile:1.7
 
-ARG NODE_IMAGE=node:22.14-alpine
-
 # --- Stage 1: Install Dependencies ---
-FROM ${NODE_IMAGE} AS deps
+FROM node:22.14-alpine AS deps
 
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
 # --- Stage 2: Build Standalone Bundle ---
-FROM ${NODE_IMAGE} AS builder
+FROM node:22.14-alpine AS builder
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -23,7 +21,7 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} \
 RUN npm run build
 
 # --- Stage 3: Minimal Non-Root Runtime ---
-FROM ${NODE_IMAGE} AS runner
+FROM node:22.14-alpine AS runner
 
 ARG APP_UID=10001
 ARG APP_GID=10001
@@ -35,6 +33,7 @@ ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME="0.0.0.0"
 
+# hadolint ignore=DL3018
 RUN apk add --no-cache tini
 
 RUN addgroup --system --gid "${APP_GID}" nodejs \
