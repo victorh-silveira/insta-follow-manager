@@ -7,13 +7,13 @@ default_language_version:
 repos:
   - repo: local
     hooks:
-      - id: commitlint
-        name: Commitlint | Conventional Commits
-        entry: >-
-          npx --yes -p @commitlint/cli -p @commitlint/config-conventional
-          commitlint --config linters/commitlint.config.mjs --edit
+      - id: commitlint-early
+        name: Commitlint (Conventional Commits)
+        entry: bash linters/git-hooks/bin/commitlint-early.sh
         language: system
-        stages: [commit-msg]
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
 
       - id: python-lint
         name: Python | Lint
@@ -126,3 +126,19 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
+
+      - id: cleanup
+        name: Limpeza (caches e artefatos locais)
+        entry: python scripts/operations/clean_workspace.py --area all --stage clean
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: commitlint
+        name: Commitlint (Conventional Commits)
+        entry: >-
+          npx --yes -p @commitlint/cli -p @commitlint/config-conventional
+          commitlint --config linters/commitlint.config.mjs --edit
+        language: system
+        stages: [commit-msg]
