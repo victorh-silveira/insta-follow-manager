@@ -30,13 +30,13 @@ help:
 	@echo -e "$(BLUE)========================================================================$(RESET)"
 	@echo -e "Uso: $(CYAN)make <comando>$(RESET)"
 	@echo -e ""
-	@echo -e "$(YELLOW)Qualidade e CI Local (Bidirecional por Tecnologia):$(RESET)"
+	@echo -e "$(YELLOW)Qualidade e CI Local (100% por Tecnologia):$(RESET)"
 	@echo -e "  $(GREEN)app-install$(RESET)        - Cria backend/.venv e instala dependencias Python/Node"
-	@echo -e "  $(GREEN)app-lint$(RESET)           - Lint Python, React (ESLint), YAML, Docker e Shell"
-	@echo -e "  $(GREEN)app-validate$(RESET)       - Valida Python, JSON, TypeScript, Tailwind CSS e Docker"
-	@echo -e "  $(GREEN)app-security$(RESET)       - Seguranca Python, Node (npm) e Docker"
-	@echo -e "  $(GREEN)app-test$(RESET)           - Executa testes automatizados (pytest + coverage)"
-	@echo -e "  $(GREEN)app-build$(RESET)          - Valida build Python (FastAPI) e Next.js standalone"
+	@echo -e "  $(GREEN)app-lint$(RESET)           - Lint de Python, TypeScript, React, Next.js, Tailwind, Docker, Shell, JSON, YAML"
+	@echo -e "  $(GREEN)app-validate$(RESET)       - Validate de todas as 9 tecnologias da stack"
+	@echo -e "  $(GREEN)app-security$(RESET)       - Seguranca de todas as 9 tecnologias da stack"
+	@echo -e "  $(GREEN)app-test$(RESET)           - Testes de todas as 9 tecnologias da stack"
+	@echo -e "  $(GREEN)app-build$(RESET)          - Build de todas as 9 tecnologias da stack"
 	@echo -e "  $(GREEN)app-clean$(RESET)          - Limpa caches locais"
 	@echo -e "  $(GREEN)app-pre-commit$(RESET)     - Instala githooks pre-commit e commit-msg"
 	@echo -e "  $(GREEN)app-pre-commit-run$(RESET) - Roda todos os hooks por tecnologia"
@@ -63,30 +63,29 @@ app-install:
 	cd frontend && npm ci
 
 app-lint:
-	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage lint
-	$(PYTHON) scripts/operations/clean_workspace.py --area yaml --stage lint
-	$(PYTHON) scripts/operations/clean_workspace.py --area react --stage lint
-	$(PYTHON) scripts/operations/clean_workspace.py --area docker --stage lint
-	$(PYTHON) scripts/operations/clean_workspace.py --area shell --stage lint
+	@for area in python typescript react nextjs tailwind docker shell json yaml; do \
+		$(PYTHON) scripts/operations/clean_workspace.py --area $$area --stage lint || exit 1; \
+	done
 
 app-validate:
-	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage validate
-	$(PYTHON) scripts/operations/clean_workspace.py --area json --stage validate
-	$(PYTHON) scripts/operations/clean_workspace.py --area typescript --stage validate
-	$(PYTHON) scripts/operations/clean_workspace.py --area tailwind --stage validate
-	$(PYTHON) scripts/operations/clean_workspace.py --area docker --stage validate
+	@for area in python typescript react nextjs tailwind docker shell json yaml; do \
+		$(PYTHON) scripts/operations/clean_workspace.py --area $$area --stage validate || exit 1; \
+	done
 
 app-security:
-	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage security
-	$(PYTHON) scripts/operations/clean_workspace.py --area node --stage security
-	$(PYTHON) scripts/operations/clean_workspace.py --area docker --stage security
+	@for area in python typescript react nextjs tailwind docker shell json yaml; do \
+		$(PYTHON) scripts/operations/clean_workspace.py --area $$area --stage security || exit 1; \
+	done
 
 app-test:
-	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 80
+	@for area in python typescript react nextjs tailwind docker shell json yaml; do \
+		$(PYTHON) scripts/operations/clean_workspace.py --area $$area --stage test --coverage-fail-under 80 || exit 1; \
+	done
 
 app-build:
-	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage build
-	$(PYTHON) scripts/operations/clean_workspace.py --area nextjs --stage build
+	@for area in python typescript react nextjs tailwind docker shell json yaml; do \
+		$(PYTHON) scripts/operations/clean_workspace.py --area $$area --stage build || exit 1; \
+	done
 
 app-clean:
 	$(PYTHON) scripts/operations/clean_workspace.py --area all --stage clean

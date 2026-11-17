@@ -1,29 +1,21 @@
 # Padroes de Engenharia, TDD, Logging Semantico e CI/CD
 
-## Paridade Bidirecional por Tecnologia (Local <-> GitHub Actions)
+## Paridade Bidirecional 100% por Tecnologia (Local <-> GitHub Actions)
 
-Todas as etapas passam pelo orquestrador unico `scripts/operations/clean_workspace.py`, garantindo resultados identicos entre `.pre-commit-config.yaml`, `Makefile` e `.github/workflows/ci.yml`:
+Cada tecnologia possui um job dedicado no GitHub Actions (`CI - <Tecnologia>`) e o ciclo completo de 5 etapas (`Lint`, `Validate`, `Seguranca`, `Testes`, `Build`) no `.pre-commit-config.yaml`, `Makefile` e `scripts/operations/clean_workspace.py`:
 
-| Tecnologia | Etapa | Nome Padrao |
+| Job CI | Area (`clean_workspace.py`) | Etapas |
 |---|---|---|
-| Commitlint | Conventional Commits | `Commitlint (Conventional Commits)` |
-| Python (FastAPI / SQLite) | Lint | `Python \| Lint` |
-| Python (FastAPI / SQLite) | Validate | `Python \| Validate` |
-| Python (FastAPI / SQLite) | Seguranca | `Python \| Seguranca` |
-| Python (FastAPI / SQLite) | Testes | `Python \| Testes` |
-| Python (FastAPI / SQLite) | Build | `Python \| Build` |
-| JSON | Validate | `JSON \| Validate` |
-| YAML | Lint | `YAML \| Lint` |
-| TypeScript | Validate | `TypeScript \| Validate` |
-| React (ESLint) | Lint | `React (ESLint) \| Lint` |
-| Tailwind CSS | Validate | `Tailwind CSS \| Validate` |
-| Next.js | Build | `Next.js \| Build` |
-| Node (npm) | Seguranca | `Node (npm) \| Seguranca` |
-| Docker | Lint | `Docker \| Lint` |
-| Docker | Validate | `Docker \| Validate` |
-| Docker | Seguranca | `Docker \| Seguranca` |
-| Docker | Build | `Docker \| Build` |
-| Shell (Bash) | Lint | `Shell \| Lint` |
+| `CI - Commitlint` | — | `Commitlint (Conventional Commits)` |
+| `CI - Python` | `python` | `Python \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
+| `CI - TypeScript` | `typescript` | `TypeScript \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
+| `CI - React` | `react` | `React \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
+| `CI - Next.js` | `nextjs` | `Next.js \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
+| `CI - Tailwind CSS` | `tailwind` | `Tailwind CSS \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
+| `CI - Docker` | `docker` | `Docker \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
+| `CI - Shell` | `shell` | `Shell \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
+| `CI - JSON` | `json` | `JSON \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
+| `CI - YAML` | `yaml` | `YAML \| Lint`, `Validate`, `Seguranca`, `Testes`, `Build` |
 
 ## Logging Semantico Estruturado
 

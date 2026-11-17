@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Commitlint | Conventional Commits
+      - name: Commitlint (Conventional Commits)
         shell: bash
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -54,7 +54,7 @@ jobs:
           fi
 
   python:
-    name: CI - Python (FastAPI / SQLite)
+    name: CI - Python
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -81,30 +81,10 @@ jobs:
       - name: Python | Build
         run: python scripts/operations/clean_workspace.py --area python --stage build
 
-  configs-shell:
-    name: CI - JSON / YAML / Shell
+  typescript:
+    name: CI - TypeScript
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Obter codigo fonte
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
-      - name: Instalar PyYAML
-        run: pip install pyyaml yamllint
-      - name: JSON | Validate
-        run: python scripts/operations/clean_workspace.py --area json --stage validate
-      - name: YAML | Lint
-        run: python scripts/operations/clean_workspace.py --area yaml --stage lint
-      - name: Shell | Lint
-        run: python scripts/operations/clean_workspace.py --area shell --stage lint
-
-  web-stack:
-    name: CI - TypeScript / React / Tailwind CSS / Next.js / Node
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Obter codigo fonte
         uses: actions/checkout@v4
@@ -117,16 +97,97 @@ jobs:
       - name: Instalar dependencias Node
         working-directory: frontend
         run: npm ci
+      - name: TypeScript | Lint
+        run: python scripts/operations/clean_workspace.py --area typescript --stage lint
       - name: TypeScript | Validate
         run: python scripts/operations/clean_workspace.py --area typescript --stage validate
-      - name: React (ESLint) | Lint
+      - name: TypeScript | Seguranca
+        run: python scripts/operations/clean_workspace.py --area typescript --stage security
+      - name: TypeScript | Testes
+        run: python scripts/operations/clean_workspace.py --area typescript --stage test
+      - name: TypeScript | Build
+        run: python scripts/operations/clean_workspace.py --area typescript --stage build
+
+  react:
+    name: CI - React
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+      - name: Instalar dependencias Node
+        working-directory: frontend
+        run: npm ci
+      - name: React | Lint
         run: python scripts/operations/clean_workspace.py --area react --stage lint
-      - name: Tailwind CSS | Validate
-        run: python scripts/operations/clean_workspace.py --area tailwind --stage validate
-      - name: Node (npm) | Seguranca
-        run: python scripts/operations/clean_workspace.py --area node --stage security
+      - name: React | Validate
+        run: python scripts/operations/clean_workspace.py --area react --stage validate
+      - name: React | Seguranca
+        run: python scripts/operations/clean_workspace.py --area react --stage security
+      - name: React | Testes
+        run: python scripts/operations/clean_workspace.py --area react --stage test
+      - name: React | Build
+        run: python scripts/operations/clean_workspace.py --area react --stage build
+
+  nextjs:
+    name: CI - Next.js
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+      - name: Instalar dependencias Node
+        working-directory: frontend
+        run: npm ci
+      - name: Next.js | Lint
+        run: python scripts/operations/clean_workspace.py --area nextjs --stage lint
+      - name: Next.js | Validate
+        run: python scripts/operations/clean_workspace.py --area nextjs --stage validate
+      - name: Next.js | Seguranca
+        run: python scripts/operations/clean_workspace.py --area nextjs --stage security
+      - name: Next.js | Testes
+        run: python scripts/operations/clean_workspace.py --area nextjs --stage test
       - name: Next.js | Build
         run: python scripts/operations/clean_workspace.py --area nextjs --stage build
+
+  tailwind:
+    name: CI - Tailwind CSS
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+      - name: Instalar dependencias Node
+        working-directory: frontend
+        run: npm ci
+      - name: Tailwind CSS | Lint
+        run: python scripts/operations/clean_workspace.py --area tailwind --stage lint
+      - name: Tailwind CSS | Validate
+        run: python scripts/operations/clean_workspace.py --area tailwind --stage validate
+      - name: Tailwind CSS | Seguranca
+        run: python scripts/operations/clean_workspace.py --area tailwind --stage security
+      - name: Tailwind CSS | Testes
+        run: python scripts/operations/clean_workspace.py --area tailwind --stage test
+      - name: Tailwind CSS | Build
+        run: python scripts/operations/clean_workspace.py --area tailwind --stage build
 
   docker:
     name: CI - Docker
@@ -151,5 +212,75 @@ jobs:
         run: python scripts/operations/clean_workspace.py --area docker --stage validate
       - name: Docker | Seguranca
         run: python scripts/operations/clean_workspace.py --area docker --stage security
+      - name: Docker | Testes
+        run: python scripts/operations/clean_workspace.py --area docker --stage test
       - name: Docker | Build
         run: python scripts/operations/clean_workspace.py --area docker --stage build
+
+  shell:
+    name: CI - Shell
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Shell | Lint
+        run: python scripts/operations/clean_workspace.py --area shell --stage lint
+      - name: Shell | Validate
+        run: python scripts/operations/clean_workspace.py --area shell --stage validate
+      - name: Shell | Seguranca
+        run: python scripts/operations/clean_workspace.py --area shell --stage security
+      - name: Shell | Testes
+        run: python scripts/operations/clean_workspace.py --area shell --stage test
+      - name: Shell | Build
+        run: python scripts/operations/clean_workspace.py --area shell --stage build
+
+  json:
+    name: CI - JSON
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: JSON | Lint
+        run: python scripts/operations/clean_workspace.py --area json --stage lint
+      - name: JSON | Validate
+        run: python scripts/operations/clean_workspace.py --area json --stage validate
+      - name: JSON | Seguranca
+        run: python scripts/operations/clean_workspace.py --area json --stage security
+      - name: JSON | Testes
+        run: python scripts/operations/clean_workspace.py --area json --stage test
+      - name: JSON | Build
+        run: python scripts/operations/clean_workspace.py --area json --stage build
+
+  yaml:
+    name: CI - YAML
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Instalar PyYAML e Yamllint
+        run: pip install pyyaml yamllint
+      - name: YAML | Lint
+        run: python scripts/operations/clean_workspace.py --area yaml --stage lint
+      - name: YAML | Validate
+        run: python scripts/operations/clean_workspace.py --area yaml --stage validate
+      - name: YAML | Seguranca
+        run: python scripts/operations/clean_workspace.py --area yaml --stage security
+      - name: YAML | Testes
+        run: python scripts/operations/clean_workspace.py --area yaml --stage test
+      - name: YAML | Build
+        run: python scripts/operations/clean_workspace.py --area yaml --stage build
