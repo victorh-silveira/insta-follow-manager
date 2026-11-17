@@ -47,7 +47,7 @@ jobs:
           fi
 
   python:
-    name: CI - Python
+    name: CI - Python (FastAPI / SQLite)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -64,23 +64,38 @@ jobs:
           backend/.venv/bin/pip install --upgrade pip
           backend/.venv/bin/pip install -r backend/requirements.txt ruff bandit
       - name: Python | Lint
-        shell: bash
-        run: python scripts/operations/ci_runner.py --area python --stage lint
+        run: python scripts/operations/clean_workspace.py --area python --stage lint
       - name: Python | Validate
-        shell: bash
-        run: python scripts/operations/ci_runner.py --area python --stage validate
+        run: python scripts/operations/clean_workspace.py --area python --stage validate
       - name: Python | Seguranca
-        shell: bash
-        run: python scripts/operations/ci_runner.py --area python --stage security
+        run: python scripts/operations/clean_workspace.py --area python --stage security
       - name: Python | Testes
-        shell: bash
-        run: python scripts/operations/ci_runner.py --area python --stage test --coverage-fail-under 80
+        run: python scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 80
       - name: Python | Build
-        shell: bash
-        run: python scripts/operations/ci_runner.py --area python --stage build
+        run: python scripts/operations/clean_workspace.py --area python --stage build
 
-  frontend:
-    name: CI - Frontend
+  configs-shell:
+    name: CI - JSON / YAML / Shell
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Obter codigo fonte
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Instalar PyYAML
+        run: pip install pyyaml yamllint
+      - name: JSON | Validate
+        run: python scripts/operations/clean_workspace.py --area json --stage validate
+      - name: YAML | Lint
+        run: python scripts/operations/clean_workspace.py --area yaml --stage lint
+      - name: Shell | Lint
+        run: python scripts/operations/clean_workspace.py --area shell --stage lint
+
+  web-stack:
+    name: CI - TypeScript / React / Tailwind CSS / Next.js / Node
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -92,17 +107,19 @@ jobs:
           node-version: "22"
           cache: "npm"
           cache-dependency-path: "frontend/package-lock.json"
-      - name: Instalar dependencias Frontend
+      - name: Instalar dependencias Node
         working-directory: frontend
         run: npm ci
-      - name: Frontend | Lint
-        run: python scripts/operations/ci_runner.py --area frontend --stage lint
-      - name: Frontend | Validate
-        run: python scripts/operations/ci_runner.py --area frontend --stage validate
-      - name: Frontend | Seguranca
-        run: python scripts/operations/ci_runner.py --area frontend --stage security
-      - name: Frontend | Build
-        run: python scripts/operations/ci_runner.py --area frontend --stage build
+      - name: TypeScript | Validate
+        run: python scripts/operations/clean_workspace.py --area typescript --stage validate
+      - name: React (ESLint) | Lint
+        run: python scripts/operations/clean_workspace.py --area react --stage lint
+      - name: Tailwind CSS | Validate
+        run: python scripts/operations/clean_workspace.py --area tailwind --stage validate
+      - name: Node (npm) | Seguranca
+        run: python scripts/operations/clean_workspace.py --area node --stage security
+      - name: Next.js | Build
+        run: python scripts/operations/clean_workspace.py --area nextjs --stage build
 
   docker:
     name: CI - Docker
@@ -122,10 +139,10 @@ jobs:
           chmod +x /tmp/hadolint
           sudo mv /tmp/hadolint /usr/local/bin/hadolint
       - name: Docker | Lint
-        run: python scripts/operations/ci_runner.py --area docker --stage lint
+        run: python scripts/operations/clean_workspace.py --area docker --stage lint
       - name: Docker | Validate
-        run: python scripts/operations/ci_runner.py --area docker --stage validate
+        run: python scripts/operations/clean_workspace.py --area docker --stage validate
       - name: Docker | Seguranca
-        run: python scripts/operations/ci_runner.py --area docker --stage security
+        run: python scripts/operations/clean_workspace.py --area docker --stage security
       - name: Docker | Build
-        run: python scripts/operations/ci_runner.py --area docker --stage build
+        run: python scripts/operations/clean_workspace.py --area docker --stage build

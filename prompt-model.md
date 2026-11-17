@@ -103,7 +103,7 @@ Regras:
 │   └── package.json
 ├── scripts/
 │   └── operations/
-│       └── ci_runner.py          # Orquestrador unico bidirecional (Pre-Commit <-> Makefile <-> CI)
+│       └── clean_workspace.py    # Orquestrador unico bidirecional (Pre-Commit <-> Makefile <-> CI)
 ├── docs/
 │   ├── README.md
 │   ├── arquitetura.md

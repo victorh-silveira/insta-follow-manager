@@ -5,6 +5,6 @@ description: Garante paridade bidirecional entre pre-commit, Makefile e GitHub A
 
 # Pre-Commit & CI Bidirectional Sync
 
-1. Toda verificacao deve ser implementada em `scripts/operations/ci_runner.py`.
-2. Nomear hooks e steps sempre no formato `<Stack> | <Etapa>` (ex.: `Python | Lint`, `Python | Seguranca`, `Frontend | Build`, `Docker | Lint`).
-3. Validar localmente executando `python scripts/operations/ci_runner.py --area <area> --stage <stage>`.
+1. Toda verificacao deve ser implementada em `scripts/operations/clean_workspace.py`.
+2. Nomear hooks e steps sempre por tecnologia especifica no formato `<Tecnologia> | <Etapa>` (ex.: `Python | Lint`, `TypeScript | Validate`, `React (ESLint) | Lint`, `Tailwind CSS | Validate`, `Next.js | Build`, `Docker | Lint`, `Shell | Lint`).
+3. Validar localmente executando `python scripts/operations/clean_workspace.py --area <area> --stage <stage>`.

@@ -7,4 +7,4 @@ alwaysApply: true
 
 - Toda nova regra de dominio ou caso de uso deve nascer com testes unitarios em `backend/tests/unit/`.
 - Alteracoes em rotas REST devem ser cobertas por testes de integracao em `backend/tests/integration/`.
-- Sempre executar `python scripts/operations/ci_runner.py --area python --stage test` antes de concluir uma tarefa.
+- Sempre executar `python scripts/operations/clean_workspace.py --area python --stage test` antes de concluir uma tarefa.

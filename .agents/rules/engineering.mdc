@@ -5,6 +5,6 @@ alwaysApply: true
 
 # Engenharia e Paridade Local <-> CI
 
-- Qualquer alteracao deve manter paridade entre `.pre-commit-config.yaml`, `Makefile` e `.github/workflows/ci.yml` atraves de `scripts/operations/ci_runner.py`.
+- Qualquer alteracao deve manter paridade entre `.pre-commit-config.yaml`, `Makefile` e `.github/workflows/ci.yml` atraves de `scripts/operations/clean_workspace.py`.
 - Nunca commitar arquivos `.env`, `session.json`, bancos `*.db` ou segredos reais.
 - Manter `.env.example` atualizado sempre que novas variaveis de ambiente forem introduzidas.

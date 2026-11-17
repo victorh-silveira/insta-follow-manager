@@ -30,16 +30,16 @@ help:
 	@echo -e "$(BLUE)========================================================================$(RESET)"
 	@echo -e "Uso: $(CYAN)make <comando>$(RESET)"
 	@echo -e ""
-	@echo -e "$(YELLOW)Qualidade e CI Local (Bidirecional):$(RESET)"
-	@echo -e "  $(GREEN)app-install$(RESET)        - Cria backend/.venv e instala dependencias"
-	@echo -e "  $(GREEN)app-lint$(RESET)           - Lint Python, Frontend e Docker"
-	@echo -e "  $(GREEN)app-validate$(RESET)       - Valida Python, TypeScript e Docker Compose"
-	@echo -e "  $(GREEN)app-security$(RESET)       - Auditoria de seguranca Python, Frontend e Docker"
+	@echo -e "$(YELLOW)Qualidade e CI Local (Bidirecional por Tecnologia):$(RESET)"
+	@echo -e "  $(GREEN)app-install$(RESET)        - Cria backend/.venv e instala dependencias Python/Node"
+	@echo -e "  $(GREEN)app-lint$(RESET)           - Lint Python, React (ESLint), YAML, Docker e Shell"
+	@echo -e "  $(GREEN)app-validate$(RESET)       - Valida Python, JSON, TypeScript, Tailwind CSS e Docker"
+	@echo -e "  $(GREEN)app-security$(RESET)       - Seguranca Python, Node (npm) e Docker"
 	@echo -e "  $(GREEN)app-test$(RESET)           - Executa testes automatizados (pytest + coverage)"
-	@echo -e "  $(GREEN)app-build$(RESET)          - Valida build Python, Next.js standalone e Docker"
+	@echo -e "  $(GREEN)app-build$(RESET)          - Valida build Python (FastAPI) e Next.js standalone"
 	@echo -e "  $(GREEN)app-clean$(RESET)          - Limpa caches locais"
 	@echo -e "  $(GREEN)app-pre-commit$(RESET)     - Instala githooks pre-commit e commit-msg"
-	@echo -e "  $(GREEN)app-pre-commit-run$(RESET) - Roda todos os hooks do pre-commit"
+	@echo -e "  $(GREEN)app-pre-commit-run$(RESET) - Roda todos os hooks por tecnologia"
 	@echo -e ""
 	@echo -e "$(YELLOW)Docker:$(RESET)"
 	@echo -e "  $(GREEN)docker-up$(RESET)          - Sobe backend e frontend em containers (build + detach)"
@@ -63,31 +63,33 @@ app-install:
 	cd frontend && npm ci
 
 app-lint:
-	$(PYTHON) scripts/operations/ci_runner.py --area python --stage lint
-	$(PYTHON) scripts/operations/ci_runner.py --area frontend --stage lint
-	$(PYTHON) scripts/operations/ci_runner.py --area docker --stage lint
+	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage lint
+	$(PYTHON) scripts/operations/clean_workspace.py --area yaml --stage lint
+	$(PYTHON) scripts/operations/clean_workspace.py --area react --stage lint
+	$(PYTHON) scripts/operations/clean_workspace.py --area docker --stage lint
+	$(PYTHON) scripts/operations/clean_workspace.py --area shell --stage lint
 
 app-validate:
-	$(PYTHON) scripts/operations/ci_runner.py --area python --stage validate
-	$(PYTHON) scripts/operations/ci_runner.py --area frontend --stage validate
-	$(PYTHON) scripts/operations/ci_runner.py --area docker --stage validate
+	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage validate
+	$(PYTHON) scripts/operations/clean_workspace.py --area json --stage validate
+	$(PYTHON) scripts/operations/clean_workspace.py --area typescript --stage validate
+	$(PYTHON) scripts/operations/clean_workspace.py --area tailwind --stage validate
+	$(PYTHON) scripts/operations/clean_workspace.py --area docker --stage validate
 
 app-security:
-	$(PYTHON) scripts/operations/ci_runner.py --area python --stage security
-	$(PYTHON) scripts/operations/ci_runner.py --area frontend --stage security
-	$(PYTHON) scripts/operations/ci_runner.py --area docker --stage security
+	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage security
+	$(PYTHON) scripts/operations/clean_workspace.py --area node --stage security
+	$(PYTHON) scripts/operations/clean_workspace.py --area docker --stage security
 
 app-test:
-	$(PYTHON) scripts/operations/ci_runner.py --area python --stage test --coverage-fail-under 80
-	$(PYTHON) scripts/operations/ci_runner.py --area frontend --stage test
+	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 80
 
 app-build:
-	$(PYTHON) scripts/operations/ci_runner.py --area python --stage build
-	$(PYTHON) scripts/operations/ci_runner.py --area frontend --stage build
+	$(PYTHON) scripts/operations/clean_workspace.py --area python --stage build
+	$(PYTHON) scripts/operations/clean_workspace.py --area nextjs --stage build
 
 app-clean:
-	$(PYTHON) scripts/operations/ci_runner.py --area python --stage clean
-	$(PYTHON) scripts/operations/ci_runner.py --area frontend --stage clean
+	$(PYTHON) scripts/operations/clean_workspace.py --area all --stage clean
 
 app-pre-commit:
 	bash linters/git-hooks/install.sh

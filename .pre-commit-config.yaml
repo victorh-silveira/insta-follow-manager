@@ -17,7 +17,7 @@ repos:
 
       - id: python-lint
         name: Python | Lint
-        entry: python scripts/operations/ci_runner.py --area python --stage lint
+        entry: python scripts/operations/clean_workspace.py --area python --stage lint
         language: system
         pass_filenames: false
         always_run: true
@@ -25,7 +25,7 @@ repos:
 
       - id: python-validate
         name: Python | Validate
-        entry: python scripts/operations/ci_runner.py --area python --stage validate
+        entry: python scripts/operations/clean_workspace.py --area python --stage validate
         language: system
         pass_filenames: false
         always_run: true
@@ -33,7 +33,7 @@ repos:
 
       - id: python-security
         name: Python | Seguranca
-        entry: python scripts/operations/ci_runner.py --area python --stage security
+        entry: python scripts/operations/clean_workspace.py --area python --stage security
         language: system
         pass_filenames: false
         always_run: true
@@ -41,7 +41,7 @@ repos:
 
       - id: python-test
         name: Python | Testes
-        entry: python scripts/operations/ci_runner.py --area python --stage test --coverage-fail-under 80
+        entry: python scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 80
         language: system
         pass_filenames: false
         always_run: true
@@ -49,31 +49,55 @@ repos:
 
       - id: python-build
         name: Python | Build
-        entry: python scripts/operations/ci_runner.py --area python --stage build
+        entry: python scripts/operations/clean_workspace.py --area python --stage build
         language: system
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
 
-      - id: frontend-lint
-        name: Frontend | Lint
-        entry: python scripts/operations/ci_runner.py --area frontend --stage lint
+      - id: json-validate
+        name: JSON | Validate
+        entry: python scripts/operations/clean_workspace.py --area json --stage validate
         language: system
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
 
-      - id: frontend-validate
-        name: Frontend | Validate
-        entry: python scripts/operations/ci_runner.py --area frontend --stage validate
+      - id: yaml-lint
+        name: YAML | Lint
+        entry: python scripts/operations/clean_workspace.py --area yaml --stage lint
         language: system
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
 
-      - id: frontend-build
-        name: Frontend | Build
-        entry: python scripts/operations/ci_runner.py --area frontend --stage build
+      - id: typescript-validate
+        name: TypeScript | Validate
+        entry: python scripts/operations/clean_workspace.py --area typescript --stage validate
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: react-lint
+        name: React (ESLint) | Lint
+        entry: python scripts/operations/clean_workspace.py --area react --stage lint
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: tailwind-validate
+        name: Tailwind CSS | Validate
+        entry: python scripts/operations/clean_workspace.py --area tailwind --stage validate
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: nextjs-build
+        name: Next.js | Build
+        entry: python scripts/operations/clean_workspace.py --area nextjs --stage build
         language: system
         pass_filenames: false
         always_run: true
@@ -81,7 +105,7 @@ repos:
 
       - id: docker-lint
         name: Docker | Lint
-        entry: python scripts/operations/ci_runner.py --area docker --stage lint
+        entry: python scripts/operations/clean_workspace.py --area docker --stage lint
         language: system
         pass_filenames: false
         always_run: true
@@ -89,7 +113,15 @@ repos:
 
       - id: docker-validate
         name: Docker | Validate
-        entry: python scripts/operations/ci_runner.py --area docker --stage validate
+        entry: python scripts/operations/clean_workspace.py --area docker --stage validate
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: shell-lint
+        name: Shell | Lint
+        entry: python scripts/operations/clean_workspace.py --area shell --stage lint
         language: system
         pass_filenames: false
         always_run: true
