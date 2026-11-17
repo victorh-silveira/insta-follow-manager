@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.1.1...v1.2.0) (2026-11-17)
+
+### Funcionalidades
+
+* **frontend:** adiciona paleta de cores e melhorias de ui/ux ([f5a4a8c](https://github.com/victorh-silveira/insta-follow-manager/commit/f5a4a8c15ece4e5fceafdfcf01355a8b44a5a1d1))
+
 ## [1.1.1](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.1.0...v1.1.1) (2026-11-17)
 
 ### Correcoes de Bug
