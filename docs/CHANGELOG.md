@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.0.0...v1.1.0) (2026-11-17)
+
+### Funcionalidades
+
+* **all:** integra autenticacao e sincronizacao real com API do Instagram ([60ff7d9](https://github.com/victorh-silveira/insta-follow-manager/commit/60ff7d99dd376b0474028f5ce68c6f89ab1b5b4e))
+
 ## 1.0.0 (2026-11-17)
 
 ### Funcionalidades
