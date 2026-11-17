@@ -48,10 +48,10 @@ def run_python(stage: str, coverage_fail_under: int) -> int:
 
     if stage == "security":
         if shutil.which("gitleaks"):
-            rc = run_cmd(
-                ["gitleaks", "detect", "--source", ".", "--config", ".gitleaks.toml", "--no-git"],
-                ROOT_DIR,
-            )
+            gitleaks_cmd = ["gitleaks", "detect", "--source", ".", "--config", ".gitleaks.toml"]
+            if not (ROOT_DIR / ".git").exists():
+                gitleaks_cmd.append("--no-git")
+            rc = run_cmd(gitleaks_cmd, ROOT_DIR)
             if rc != 0:
                 return rc
         if shutil.which("bandit"):

@@ -4,9 +4,12 @@ title = "Insta Follow Manager - Gitleaks Config"
 useDefault = true
 
 [allowlist]
-description = "Arquivos de exemplo e testes unitarios com dados ficticios"
+description = "Arquivos de exemplo, testes unitarios e dependencias locais ignoradas"
 paths = [
   '''backend/\.env\.example$''',
+  '''backend/\.venv/.*''',
   '''backend/tests/.*''',
   '''backend/src/infrastructure/gateways/mock_instagram_gateway\.py$''',
+  '''frontend/node_modules/.*''',
+  '''frontend/\.next/.*''',
 ]
