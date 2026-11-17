@@ -69,7 +69,7 @@ jobs:
         run: |
           python -m venv backend/.venv
           backend/.venv/bin/pip install --upgrade pip
-          backend/.venv/bin/pip install -r backend/requirements.txt ruff bandit
+          backend/.venv/bin/pip install -r backend/requirements.txt -r backend/requirements-dev.txt
       - name: Python | Lint
         run: python scripts/operations/clean_workspace.py --area python --stage lint
       - name: Python | Validate

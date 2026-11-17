@@ -1,8 +1,10 @@
-fastapi>=0.115.0
-uvicorn[standard]>=0.32.0
-pydantic>=2.9.0
-pydantic-settings>=2.6.0
-instagrapi>=2.1.2
-pytest>=8.3.0
-pytest-cov>=6.0.0
-httpx>=0.27.0
+# ---- API WEB & SERVIDOR ----
+fastapi==0.163.1               # Framework web REST assincrono com validacao OpenAPI e injecao de dependencias
+uvicorn[standard]==0.54.0      # Servidor ASGI de alta performance para execucao da API FastAPI
+
+# ---- VALIDACAO & CONFIGURACAO ----
+pydantic==2.14.3               # Validacao de schemas e contratos de entrada/saida na camada de apresentacao
+pydantic-settings==2.16.3      # Carregamento tipado de variaveis de ambiente (.env) para configuracao da app
+
+# ---- INTEGRACAO INSTAGRAM ----
+instagrapi==3.2.15             # Adapter para comunicacao com a API privada do Instagram (seguindo, seguidores e unfollow)

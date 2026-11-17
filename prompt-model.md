@@ -90,7 +90,8 @@ Regras:
 │   ├── .env.example
 │   ├── pyproject.toml
 │   ├── pytest.ini
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── requirements-dev.txt
 ├── frontend/
 │   ├── src/
 │   │   ├── app/

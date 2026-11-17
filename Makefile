@@ -59,7 +59,7 @@ help:
 	@echo -e "$(BLUE)========================================================================$(RESET)"
 
 app-install:
-	cd backend && $(PYTHON) -m venv .venv && ./.venv/bin/pip install -r requirements.txt
+	cd backend && $(PYTHON) -m venv .venv && ./.venv/bin/pip install -r requirements.txt -r requirements-dev.txt
 	cd frontend && npm ci
 
 app-lint:
