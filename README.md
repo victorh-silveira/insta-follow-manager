@@ -8,7 +8,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-UI-06B6D4?logo=tailwindcss&logoColor=white)](frontend/src/app/globals.css)
 [![Architecture](https://img.shields.io/badge/Architecture-DDD%20%7C%20Clean%20%7C%20SOLID-0A66C2)](docs/arquitetura.md)
 [![Ruff](https://img.shields.io/badge/Ruff-lint%20%7C%20format-D7FF64?logo=ruff&logoColor=black)](backend/pyproject.toml)
-[![Tests](https://img.shields.io/badge/pytest-41%20passed%20%7C%2088%25%20cov-0F9D58?logo=pytest&logoColor=white)](backend/tests)
+[![Tests](https://img.shields.io/badge/pytest-58%20passed%20%7C%20100%25%20cov-0F9D58?logo=pytest&logoColor=white)](backend/tests)
 [![Security](https://img.shields.io/badge/security-bandit%20%7C%20gitleaks-C0392B)](.gitleaks.toml)
 [![Pre-commit](https://img.shields.io/badge/pre--commit-16%20gates%20ativos-FAB040?logo=pre-commit&logoColor=white)](.pre-commit-config.yaml)
 [![Commits](https://img.shields.io/badge/commits-Conventional%20Commits%20PT--BR-FE5196?logo=conventionalcommits&logoColor=white)](linters/commitlint.config.mjs)

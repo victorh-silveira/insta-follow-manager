@@ -143,7 +143,7 @@ Regras:
 | `Python \| Lint` | `ruff check` + `ruff format --check` |
 | `Python \| Validate` | `python -m compileall -q src tests` |
 | `Python \| Seguranca` | `gitleaks` (`.gitleaks.toml`) + `bandit` |
-| `Python \| Testes` | `pytest --cov=src --cov-fail-under=80` |
+| `Python \| Testes` | `pytest --cov=src --cov-fail-under=100` |
 | `Python \| Build` | Importacao e validacao da app FastAPI |
 | `Frontend \| Lint` | `npm run lint` (`eslint`) |
 | `Frontend \| Validate` | `npx tsc --noEmit` |

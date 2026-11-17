@@ -168,3 +168,16 @@ def test_unfollow_non_followed_profile_raises_error() -> None:
 
     with pytest.raises(NotFollowingError):
         UnfollowProfileUseCase(gateway, repo).execute("6")
+
+
+def test_list_profiles_all_bucket_and_invalid_bucket() -> None:
+    repo = InMemoryProfileRepository()
+    gateway = FakeInstagramGateway()
+    SyncRelationshipsUseCase(gateway, repo).execute()
+
+    use_case = ListProfilesByBucketUseCase(repo)
+    all_res = use_case.execute(list_type=RelationshipListType.FOLLOWING, bucket="ALL")
+    assert len(all_res.profiles) == 5
+
+    with pytest.raises(ValueError, match="Unsupported bucket filter"):
+        use_case.execute(list_type=RelationshipListType.FOLLOWING, bucket="INVALID")

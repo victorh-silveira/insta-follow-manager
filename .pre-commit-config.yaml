@@ -42,7 +42,7 @@ repos:
 
       - id: python-test
         name: Python | Testes
-        entry: python scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 80
+        entry: python scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 100
         language: system
         pass_filenames: false
         always_run: true

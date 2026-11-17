@@ -77,7 +77,7 @@ jobs:
       - name: Python | Seguranca
         run: python scripts/operations/clean_workspace.py --area python --stage security
       - name: Python | Testes
-        run: python scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 80
+        run: python scripts/operations/clean_workspace.py --area python --stage test --coverage-fail-under 100
       - name: Python | Build
         run: python scripts/operations/clean_workspace.py --area python --stage build
 

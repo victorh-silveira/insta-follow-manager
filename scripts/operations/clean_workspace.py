@@ -362,7 +362,7 @@ def main() -> int:
         required=True,
         choices=["lint", "validate", "security", "test", "build", "clean"],
     )
-    parser.add_argument("--coverage-fail-under", type=int, default=80)
+    parser.add_argument("--coverage-fail-under", type=int, default=100)
     args = parser.parse_args()
 
     dispatch = {

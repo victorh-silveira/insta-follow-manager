@@ -97,3 +97,22 @@ def test_emit_event_passes_extra_fields(caplog: object) -> None:
     assert len(caplog.records) == 1  # type: ignore[attr-defined]
     assert caplog.records[0].event == "test.event"  # type: ignore[attr-defined]
     assert caplog.records[0].fields == {"count": 3}  # type: ignore[attr-defined]
+
+
+def test_json_formatter_includes_exception_traceback() -> None:
+    try:
+        raise RuntimeError("sample failure")
+    except RuntimeError as exc:
+        record = logging.LogRecord(
+            name="test.logger",
+            level=logging.ERROR,
+            pathname=__file__,
+            lineno=1,
+            msg="Failed",
+            args=(),
+            exc_info=(type(exc), exc, exc.__traceback__),
+        )
+        record.event = "test.failed"
+        record.fields = {}
+        payload = json.loads(SemanticJsonFormatter().format(record))
+        assert "RuntimeError: sample failure" in payload["exception"]

@@ -79,7 +79,7 @@ app-security:
 
 app-test:
 	@for area in python typescript react nextjs tailwind docker shell json yaml; do \
-		$(PYTHON) scripts/operations/clean_workspace.py --area $$area --stage test --coverage-fail-under 80 || exit 1; \
+		$(PYTHON) scripts/operations/clean_workspace.py --area $$area --stage test --coverage-fail-under 100 || exit 1; \
 	done
 
 app-build:

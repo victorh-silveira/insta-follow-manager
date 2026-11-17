@@ -5,6 +5,8 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 import pytest
 
+from src.application.use_cases.sync_relationships import SyncRelationshipsUseCase
+from src.domain.exceptions import GatewayAuthError, GatewayError, RateLimitError
 from src.infrastructure.gateways.mock_instagram_gateway import MockInstagramGateway
 from src.infrastructure.persistence.database import SQLiteDatabase
 from src.infrastructure.persistence.sqlite_profile_repository import SQLiteProfileRepository
@@ -90,3 +92,56 @@ def test_unfollow_missing_profile_returns_404(client: TestClient) -> None:
     client.post("/api/relationships/sync")
     resp = client.post("/api/relationships/does-not-exist/unfollow")
     assert resp.status_code == 404
+
+
+def test_unfollow_non_followed_profile_returns_400(client: TestClient) -> None:
+    client.post("/api/relationships/sync")
+    resp = client.post("/api/relationships/201/unfollow")
+    assert resp.status_code == 400
+
+
+def test_invalid_bucket_returns_422(client: TestClient) -> None:
+    resp = client.get("/api/relationships", params={"list_type": "following", "bucket": "BAD"})
+    assert resp.status_code == 422
+
+
+@pytest.mark.parametrize(
+    ("exc", "expected_status"),
+    [
+        (GatewayAuthError("auth"), 401),
+        (RateLimitError("rate"), 429),
+        (GatewayError("bad gateway"), 502),
+    ],
+)
+def test_gateway_errors_map_to_http_status(tmp_path: Path, exc: Exception, expected_status: int) -> None:
+    class FailingGateway(MockInstagramGateway):
+        def fetch_following(self):  # type: ignore[override]
+            raise exc
+
+    db = SQLiteDatabase(str(tmp_path / "err.db"))
+    app = create_app()
+    repo = SQLiteProfileRepository(db)
+    app.dependency_overrides[dependencies.get_sync_use_case] = lambda: SyncRelationshipsUseCase(
+        FailingGateway(), repo
+    )
+    tc = TestClient(app)
+
+    resp = tc.post("/api/relationships/sync")
+    assert resp.status_code == expected_status
+
+
+def test_unhandled_exception_logged_by_middleware(tmp_path: Path) -> None:
+    class CrashGateway(MockInstagramGateway):
+        def fetch_following(self):  # type: ignore[override]
+            raise RuntimeError("unexpected crash")
+
+    db = SQLiteDatabase(str(tmp_path / "crash.db"))
+    app = create_app()
+    repo = SQLiteProfileRepository(db)
+    app.dependency_overrides[dependencies.get_sync_use_case] = lambda: SyncRelationshipsUseCase(
+        CrashGateway(), repo
+    )
+    tc = TestClient(app, raise_server_exceptions=False)
+
+    resp = tc.post("/api/relationships/sync")
+    assert resp.status_code == 500
