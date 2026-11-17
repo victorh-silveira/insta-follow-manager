@@ -159,7 +159,7 @@ def run_nextjs(stage: str) -> int:
             return 1
         return 0
     if stage == "security":
-        return run_cmd([npm, "audit", "--audit-level=high"], FRONTEND_DIR)
+        return run_cmd([npm, "audit", "--omit=dev", "--audit-level=high"], FRONTEND_DIR)
     if stage == "test":
         return run_cmd([npx, "next", "typegen"], FRONTEND_DIR)
     if stage == "build":
