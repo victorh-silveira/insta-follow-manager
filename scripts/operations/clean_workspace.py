@@ -17,11 +17,11 @@ IGNORED_DIRS = {".git", ".venv", "node_modules", ".next", "__pycache__", ".pytes
 
 
 def resolve_backend_python() -> str:
-    """Resolve Python executable preferring backend/.venv when present."""
-    candidates = [
-        BACKEND_DIR / ".venv" / "Scripts" / "python.exe",
-        BACKEND_DIR / ".venv" / "bin" / "python",
-    ]
+    """Resolve Python executable preferring the matching OS backend/.venv interpreter."""
+    if sys.platform == "win32":
+        candidates = [BACKEND_DIR / ".venv" / "Scripts" / "python.exe"]
+    else:
+        candidates = [BACKEND_DIR / ".venv" / "bin" / "python"]
     for candidate in candidates:
         if candidate.exists():
             return str(candidate)
@@ -115,22 +115,23 @@ def run_yaml(stage: str) -> int:
     if stage != "lint":
         return 0
     files = iter_project_files(".yml", ".yaml")
+    rel_files = [f.relative_to(ROOT_DIR).as_posix() for f in files]
     if shutil.which("yamllint"):
-        return run_cmd(["yamllint", "-c", ".yamllint.yaml", *[str(f) for f in files]], ROOT_DIR)
+        return run_cmd(["yamllint", "-c", ".yamllint.yaml", *rel_files], ROOT_DIR)
     py = resolve_backend_python()
-    for file_path in files:
+    for rel_path in rel_files:
         rc = run_cmd(
             [
                 py,
                 "-c",
                 "import sys, yaml; yaml.safe_load(open(sys.argv[1], encoding='utf-8'))",
-                str(file_path),
+                rel_path,
             ],
             ROOT_DIR,
         )
         if rc != 0:
             return rc
-    print(f"[clean_workspace] {len(files)} arquivos YAML validados.")
+    print(f"[clean_workspace] {len(rel_files)} arquivos YAML validados.")
     return 0
 
 
