@@ -8,6 +8,7 @@ description = "Arquivos de exemplo, testes unitarios e dependencias locais ignor
 paths = [
   '''backend/\.env\.example$''',
   '''backend/\.venv/.*''',
+  '''backend/\.venv-wsl/.*''',
   '''backend/tests/.*''',
   '''backend/src/infrastructure/gateways/mock_instagram_gateway\.py$''',
   '''frontend/node_modules/.*''',

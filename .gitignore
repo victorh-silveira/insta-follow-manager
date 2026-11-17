@@ -1,5 +1,6 @@
 # Python
 backend/.venv/
+backend/.venv-wsl/
 __pycache__/
 *.py[cod]
 *$py.class

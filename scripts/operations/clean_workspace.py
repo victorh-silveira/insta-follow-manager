@@ -17,11 +17,14 @@ IGNORED_DIRS = {".git", ".venv", "node_modules", ".next", "__pycache__", ".pytes
 
 
 def resolve_backend_python() -> str:
-    """Resolve Python executable preferring the matching OS backend/.venv interpreter."""
+    """Resolve Python executable preferring the matching OS backend venv interpreter."""
     if sys.platform == "win32":
         candidates = [BACKEND_DIR / ".venv" / "Scripts" / "python.exe"]
     else:
-        candidates = [BACKEND_DIR / ".venv" / "bin" / "python"]
+        candidates = [
+            BACKEND_DIR / ".venv-wsl" / "bin" / "python",
+            BACKEND_DIR / ".venv" / "bin" / "python",
+        ]
     for candidate in candidates:
         if candidate.exists():
             return str(candidate)
