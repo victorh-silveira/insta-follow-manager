@@ -65,6 +65,7 @@ export default {
         "domain",
         "frontend",
         "infra",
+        "release",
         "repo",
         "scripts",
         "test",

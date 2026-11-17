@@ -1,0 +1,89 @@
+name: Resumo do pipeline
+description: Publica o estado das etapas em portugues no resumo do GitHub
+
+inputs:
+  commitlint:
+    required: true
+  python:
+    required: true
+  typescript:
+    required: true
+  react:
+    required: true
+  nextjs:
+    required: true
+  tailwind:
+    required: true
+  docker:
+    required: true
+  shell:
+    required: true
+  json:
+    required: true
+  yaml:
+    required: true
+  workflows:
+    required: true
+  release:
+    required: true
+  release_tag:
+    required: false
+    default: ""
+  release_published:
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Resumo | Pipeline
+      shell: bash
+      env:
+        RES_COMMITLINT: ${{ inputs.commitlint }}
+        RES_PYTHON: ${{ inputs.python }}
+        RES_TYPESCRIPT: ${{ inputs.typescript }}
+        RES_REACT: ${{ inputs.react }}
+        RES_NEXTJS: ${{ inputs.nextjs }}
+        RES_TAILWIND: ${{ inputs.tailwind }}
+        RES_DOCKER: ${{ inputs.docker }}
+        RES_SHELL: ${{ inputs.shell }}
+        RES_JSON: ${{ inputs.json }}
+        RES_YAML: ${{ inputs.yaml }}
+        RES_WORKFLOWS: ${{ inputs.workflows }}
+        RES_RELEASE: ${{ inputs.release }}
+        VERSAO_PUBLICADA: ${{ inputs.release_published }}
+        VERSAO_TAG: ${{ inputs.release_tag }}
+      run: |
+        traduzir() {
+          case "$1" in
+            success) echo "Aprovado" ;;
+            failure) echo "Falhou" ;;
+            cancelled) echo "Cancelado" ;;
+            skipped) echo "Ignorado" ;;
+            *) echo "Indisponivel" ;;
+          esac
+        }
+        {
+          echo "## Resumo da integracao e publicacao"
+          echo ""
+          echo "| Etapa | Resultado |"
+          echo "|---|---|"
+          echo "| Commitlint | $(traduzir "$RES_COMMITLINT") |"
+          echo "| Python | $(traduzir "$RES_PYTHON") |"
+          echo "| TypeScript | $(traduzir "$RES_TYPESCRIPT") |"
+          echo "| React | $(traduzir "$RES_REACT") |"
+          echo "| Next.js | $(traduzir "$RES_NEXTJS") |"
+          echo "| Tailwind CSS | $(traduzir "$RES_TAILWIND") |"
+          echo "| Docker | $(traduzir "$RES_DOCKER") |"
+          echo "| Shell | $(traduzir "$RES_SHELL") |"
+          echo "| JSON | $(traduzir "$RES_JSON") |"
+          echo "| YAML | $(traduzir "$RES_YAML") |"
+          echo "| Workflows | $(traduzir "$RES_WORKFLOWS") |"
+          echo "| Publicacao | $(traduzir "$RES_RELEASE") |"
+          echo ""
+          if [ "$VERSAO_PUBLICADA" = "true" ]; then
+            printf 'Versao publicada: %s\n' "$VERSAO_TAG"
+          else
+            echo "Nenhuma versao nova foi publicada neste envio."
+          fi
+        } >> "$GITHUB_STEP_SUMMARY"
