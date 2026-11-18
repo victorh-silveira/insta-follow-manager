@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.3.0...v1.4.0) (2026-11-18)
+
+### Funcionalidades
+
+* **all:** suporta challenge, sessionid e acesso via rede local ([a265432](https://github.com/victorh-silveira/insta-follow-manager/commit/a265432c19187caf85029c53057deb3d0b4f570b))
+
 ## [1.3.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.2.1...v1.3.0) (2026-11-18)
 
 ### Funcionalidades
