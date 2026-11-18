@@ -64,6 +64,16 @@ class UnfollowResultDTO:
 
 
 @dataclass(frozen=True)
+class RemoveFollowerResultDTO:
+    """Outcome of a remove-follower operation."""
+
+    pk: str
+    username: str
+    full_name: str
+    removed: bool
+
+
+@dataclass(frozen=True)
 class AuthStatusDTO:
     """Authentication status of the active Instagram session."""
 

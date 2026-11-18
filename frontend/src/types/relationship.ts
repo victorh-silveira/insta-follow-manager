@@ -39,6 +39,13 @@ export interface UnfollowResponse {
   unfollowed: boolean;
 }
 
+export interface RemoveFollowerResponse {
+  pk: string;
+  username: string;
+  full_name: string;
+  removed: boolean;
+}
+
 export interface HealthResponse {
   status: string;
   gateway_mode: string;

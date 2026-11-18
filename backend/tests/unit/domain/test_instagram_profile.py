@@ -3,7 +3,7 @@
 import pytest
 
 from src.domain.entities.instagram_profile import InstagramProfile
-from src.domain.exceptions import NotFollowingError
+from src.domain.exceptions import NotFollowerError, NotFollowingError
 
 
 def test_profile_bucket_uses_full_name_not_username() -> None:
@@ -37,3 +37,26 @@ def test_mark_unfollowed_when_not_following_raises_error() -> None:
     )
     with pytest.raises(NotFollowingError):
         profile.mark_unfollowed()
+
+
+def test_mark_follower_removed_updates_state() -> None:
+    profile = InstagramProfile(
+        pk="1",
+        username="ana.j",
+        full_name="Ana Julia",
+        is_following=False,
+        is_follower=True,
+    )
+    profile.mark_follower_removed()
+    assert profile.is_follower is False
+
+
+def test_mark_follower_removed_when_not_follower_raises_error() -> None:
+    profile = InstagramProfile(
+        pk="1",
+        username="ana.j",
+        full_name="Ana Julia",
+        is_follower=False,
+    )
+    with pytest.raises(NotFollowerError):
+        profile.mark_follower_removed()

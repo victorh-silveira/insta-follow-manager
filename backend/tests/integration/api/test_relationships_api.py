@@ -208,3 +208,24 @@ def test_auth_login_2fa_and_challenge_responses(exc: Exception, expected_flag: s
     resp = tc.post("/api/auth/login", json={"username": "u", "password": "p"})
     assert resp.status_code == 401
     assert resp.json()[expected_flag] is True
+
+
+def test_remove_follower_endpoint_updates_followers_and_handles_errors(
+    client: TestClient,
+) -> None:
+    client.post("/api/relationships/sync")
+
+    followers_resp = client.get("/api/relationships?list_type=followers&bucket=ALL")
+    assert followers_resp.status_code == 200
+    target = followers_resp.json()["profiles"][0]
+
+    remove_resp = client.post(f"/api/relationships/{target['pk']}/remove-follower")
+    assert remove_resp.status_code == 200
+    assert remove_resp.json()["removed"] is True
+    assert remove_resp.json()["pk"] == target["pk"]
+
+    repeat_resp = client.post(f"/api/relationships/{target['pk']}/remove-follower")
+    assert repeat_resp.status_code == 400
+
+    missing_resp = client.post("/api/relationships/nonexistent-pk/remove-follower")
+    assert missing_resp.status_code == 404

@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 
-import { Profile } from "@/types/relationship";
+import { Profile, RelationshipListType } from "@/types/relationship";
 
 interface ProfileCardProps {
   profile: Profile;
-  isUnfollowing: boolean;
+  activeTab: RelationshipListType;
+  isProcessing: boolean;
   onUnfollow: (pk: string) => void;
+  onRemoveFollower: (pk: string) => void;
 }
 
 function getInitials(fullName: string, username: string): string {
@@ -21,8 +23,10 @@ function getInitials(fullName: string, username: string): string {
 
 export function ProfileCard({
   profile,
-  isUnfollowing,
+  activeTab,
+  isProcessing,
   onUnfollow,
+  onRemoveFollower,
 }: ProfileCardProps) {
   const [confirming, setConfirming] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -30,9 +34,17 @@ export function ProfileCard({
   const displayName = profile.full_name.trim() || "(Sem nome de exibição)";
   const showAvatarImage = Boolean(profile.profile_pic_url) && !imageError;
 
-  const handleConfirmUnfollow = () => {
+  const isFollowerMode = activeTab === "followers";
+  const canAct = isFollowerMode ? profile.is_follower : profile.is_following;
+  const actionLabel = isFollowerMode ? "Remover seguidor" : "Remover seguindo";
+
+  const handleConfirmAction = () => {
     setConfirming(false);
-    onUnfollow(profile.pk);
+    if (isFollowerMode) {
+      onRemoveFollower(profile.pk);
+    } else {
+      onUnfollow(profile.pk);
+    }
   };
 
   return (
@@ -101,22 +113,26 @@ export function ProfileCard({
         </div>
       </div>
 
-      {profile.is_following && (
+      {canAct && (
         <div className="flex shrink-0 items-center gap-1.5">
           {confirming ? (
             <>
               <button
                 type="button"
-                onClick={handleConfirmUnfollow}
-                disabled={isUnfollowing}
-                className="rounded-xl bg-rose-600 px-3 py-2 text-xs font-bold text-white shadow-sm shadow-rose-500/25 transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={handleConfirmAction}
+                disabled={isProcessing}
+                className={`rounded-xl px-3 py-2 text-xs font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                  isFollowerMode
+                    ? "bg-amber-600 shadow-amber-500/25 hover:bg-amber-700"
+                    : "bg-rose-600 shadow-rose-500/25 hover:bg-rose-700"
+                }`}
               >
-                {isUnfollowing ? "Enviando..." : "Confirmar"}
+                {isProcessing ? "Enviando..." : "Confirmar"}
               </button>
               <button
                 type="button"
                 onClick={() => setConfirming(false)}
-                disabled={isUnfollowing}
+                disabled={isProcessing}
                 className="rounded-xl border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
               >
                 Não
@@ -126,10 +142,14 @@ export function ProfileCard({
             <button
               type="button"
               onClick={() => setConfirming(true)}
-              disabled={isUnfollowing}
-              className="rounded-xl border border-rose-200 bg-rose-50/80 px-3.5 py-2 text-xs font-semibold text-rose-700 transition hover:border-rose-600 hover:bg-rose-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={isProcessing}
+              className={`rounded-xl border px-3 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                isFollowerMode
+                  ? "border-amber-200 bg-amber-50/80 text-amber-800 hover:border-amber-600 hover:bg-amber-600 hover:text-white"
+                  : "border-rose-200 bg-rose-50/80 text-rose-700 hover:border-rose-600 hover:bg-rose-600 hover:text-white"
+              }`}
             >
-              {isUnfollowing ? "Enviando..." : "Unfollow"}
+              {isProcessing ? "Enviando..." : actionLabel}
             </button>
           )}
         </div>

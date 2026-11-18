@@ -8,11 +8,13 @@ from src.application.use_cases.auth_instagram import (
     LogoutInstagramUseCase,
 )
 from src.application.use_cases.list_profiles_by_bucket import ListProfilesByBucketUseCase
+from src.application.use_cases.remove_follower import RemoveFollowerUseCase
 from src.application.use_cases.sync_relationships import SyncRelationshipsUseCase
 from src.application.use_cases.unfollow_profile import UnfollowProfileUseCase
 from src.domain.entities.instagram_profile import InstagramProfile
 from src.domain.exceptions import (
     GatewayError,
+    NotFollowerError,
     NotFollowingError,
     ProfileNotFoundError,
 )
@@ -72,6 +74,7 @@ class InMemoryProfileRepository(ProfileRepository):
 class FakeInstagramGateway(InstagramGateway):
     def __init__(self, should_fail_unfollow: bool = False) -> None:
         self.unfollowed_pks: list[str] = []
+        self.removed_follower_pks: list[str] = []
         self.should_fail_unfollow = should_fail_unfollow
         self.authenticated = True
 
@@ -108,6 +111,11 @@ class FakeInstagramGateway(InstagramGateway):
         if self.should_fail_unfollow:
             raise GatewayError("Instagram unavailable")
         self.unfollowed_pks.append(pk)
+
+    def remove_follower(self, pk: str) -> None:
+        if self.should_fail_unfollow:
+            raise GatewayError("Instagram unavailable")
+        self.removed_follower_pks.append(pk)
 
 
 def test_sync_merges_following_and_followers_accurately() -> None:
@@ -217,3 +225,29 @@ def test_auth_use_cases_lifecycle() -> None:
 
     with pytest.raises(ValueError):
         LoginInstagramUseCase(gateway).execute("   ", "")
+
+
+def test_remove_follower_calls_gateway_and_updates_repository() -> None:
+    repo = InMemoryProfileRepository()
+    gateway = FakeInstagramGateway()
+    SyncRelationshipsUseCase(gateway, repo).execute()
+
+    result = RemoveFollowerUseCase(gateway, repo).execute("6")
+
+    assert result.removed is True
+    assert gateway.removed_follower_pks == ["6"]
+    bruno = repo.get_by_pk("6")
+    assert bruno is not None
+    assert bruno.is_follower is False
+
+
+def test_remove_follower_errors_for_missing_or_non_follower() -> None:
+    repo = InMemoryProfileRepository()
+    gateway = FakeInstagramGateway()
+    SyncRelationshipsUseCase(gateway, repo).execute()
+
+    with pytest.raises(ProfileNotFoundError):
+        RemoveFollowerUseCase(gateway, repo).execute("missing")
+
+    with pytest.raises(NotFollowerError):
+        RemoveFollowerUseCase(gateway, repo).execute("2")

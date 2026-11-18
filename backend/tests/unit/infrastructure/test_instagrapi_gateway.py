@@ -30,11 +30,13 @@ class _FakeClient:
         self.loaded_path: Path | None = None
         self.dumped_path: Path | None = None
         self.unfollowed: list[int] = []
+        self.removed_followers: list[str] = []
         self.login_error: Exception | None = None
         self.account_error: Exception | None = None
         self.following_error: Exception | None = None
         self.followers_error: Exception | None = None
         self.unfollow_error: Exception | None = None
+        self.remove_follower_error: Exception | None = None
         self.last_verification_code: str | None = None
 
     def load_settings(self, path: Path) -> None:
@@ -91,6 +93,12 @@ class _FakeClient:
         if self.unfollow_error:
             raise self.unfollow_error
         self.unfollowed.append(user_id)
+
+    def user_remove_follower(self, user_id: str) -> bool:
+        if self.remove_follower_error:
+            raise self.remove_follower_error
+        self.removed_followers.append(user_id)
+        return True
 
 
 def test_instagrapi_gateway_requires_login_when_no_session_or_credentials(tmp_path: Path) -> None:
@@ -225,3 +233,11 @@ def test_instagrapi_gateway_maps_operation_errors(
     fake_client.unfollow_error = exc_factory()  # type: ignore[operator]
     with pytest.raises(expected_exc):
         gateway.unfollow("10")
+    fake_client.unfollow_error = None
+
+    gateway.remove_follower("10")
+    assert fake_client.removed_followers == ["10"]
+
+    fake_client.remove_follower_error = exc_factory()  # type: ignore[operator]
+    with pytest.raises(expected_exc):
+        gateway.remove_follower("10")

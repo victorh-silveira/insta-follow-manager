@@ -13,6 +13,10 @@ class NotFollowingError(DomainError):
     """Raised when attempting to unfollow a profile that is not currently followed."""
 
 
+class NotFollowerError(DomainError):
+    """Raised when attempting to remove a profile that is not currently a follower."""
+
+
 class GatewayError(DomainError):
     """Raised when communication with the Instagram gateway fails."""
 

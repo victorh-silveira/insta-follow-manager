@@ -61,3 +61,7 @@ class InstagramGateway(ABC):
     @abstractmethod
     def unfollow(self, pk: str) -> None:
         """Send an unfollow command to Instagram for the given user pk."""
+
+    @abstractmethod
+    def remove_follower(self, pk: str) -> None:
+        """Remove the given user pk from the authenticated user's followers."""

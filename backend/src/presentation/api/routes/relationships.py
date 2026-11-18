@@ -5,17 +5,20 @@ from dataclasses import asdict
 from fastapi import APIRouter, Depends, Query
 
 from src.application.use_cases.list_profiles_by_bucket import ListProfilesByBucketUseCase
+from src.application.use_cases.remove_follower import RemoveFollowerUseCase
 from src.application.use_cases.sync_relationships import SyncRelationshipsUseCase
 from src.application.use_cases.unfollow_profile import UnfollowProfileUseCase
 from src.domain.repositories.profile_repository import RelationshipListType
 from src.presentation.api.dependencies import (
     get_list_profiles_use_case,
+    get_remove_follower_use_case,
     get_sync_use_case,
     get_unfollow_use_case,
 )
 from src.presentation.api.schemas import (
     ListProfilesResponse,
     ProfileResponse,
+    RemoveFollowerResponse,
     SyncResponse,
     UnfollowResponse,
 )
@@ -56,3 +59,13 @@ def unfollow_profile(
     """Unfollow an Instagram user by pk and update local cache."""
     result = use_case.execute(pk)
     return UnfollowResponse(**asdict(result))
+
+
+@router.post("/{pk}/remove-follower", response_model=RemoveFollowerResponse)
+def remove_follower(
+    pk: str,
+    use_case: RemoveFollowerUseCase = Depends(get_remove_follower_use_case),
+) -> RemoveFollowerResponse:
+    """Remove a follower from the authenticated account and update local cache."""
+    result = use_case.execute(pk)
+    return RemoveFollowerResponse(**asdict(result))

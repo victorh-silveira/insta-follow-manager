@@ -43,6 +43,15 @@ class UnfollowResponse(BaseModel):
     unfollowed: bool
 
 
+class RemoveFollowerResponse(BaseModel):
+    """Response payload after a remove-follower action."""
+
+    pk: str
+    username: str
+    full_name: str
+    removed: bool
+
+
 class LoginRequest(BaseModel):
     """Credentials payload sent from the frontend login form."""
 

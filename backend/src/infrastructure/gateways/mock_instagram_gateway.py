@@ -91,3 +91,6 @@ class MockInstagramGateway(InstagramGateway):
 
     def unfollow(self, pk: str) -> None:
         self._following.pop(pk, None)
+
+    def remove_follower(self, pk: str) -> None:
+        self._followers.pop(pk, None)

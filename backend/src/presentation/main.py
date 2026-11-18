@@ -11,6 +11,7 @@ from src.domain.exceptions import (
     ChallengeRequiredError,
     GatewayAuthError,
     GatewayError,
+    NotFollowerError,
     NotFollowingError,
     ProfileNotFoundError,
     RateLimitError,
@@ -62,6 +63,11 @@ def _register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(NotFollowingError)
     async def handle_not_following(_: Request, exc: NotFollowingError) -> JSONResponse:
         emit_event(logger, logging.WARNING, "api.domain_error", str(exc), error="NotFollowingError")
+        return JSONResponse(status_code=400, content={"detail": str(exc)})
+
+    @app.exception_handler(NotFollowerError)
+    async def handle_not_follower(_: Request, exc: NotFollowerError) -> JSONResponse:
+        emit_event(logger, logging.WARNING, "api.domain_error", str(exc), error="NotFollowerError")
         return JSONResponse(status_code=400, content={"detail": str(exc)})
 
     @app.exception_handler(TwoFactorRequiredError)

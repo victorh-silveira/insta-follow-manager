@@ -4,6 +4,7 @@ import {
   ListProfilesResponse,
   LoginPayload,
   RelationshipListType,
+  RemoveFollowerResponse,
   SyncResponse,
   UnfollowResponse,
 } from "@/types/relationship";
@@ -102,6 +103,15 @@ export const relationshipApi = {
   unfollow(pk: string): Promise<UnfollowResponse> {
     return request<UnfollowResponse>(
       `/api/relationships/${encodeURIComponent(pk)}/unfollow`,
+      {
+        method: "POST",
+      }
+    );
+  },
+
+  removeFollower(pk: string): Promise<RemoveFollowerResponse> {
+    return request<RemoveFollowerResponse>(
+      `/api/relationships/${encodeURIComponent(pk)}/remove-follower`,
       {
         method: "POST",
       }

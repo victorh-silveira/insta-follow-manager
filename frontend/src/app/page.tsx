@@ -32,7 +32,7 @@ export default function HomePage() {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const [unfollowingPk, setUnfollowingPk] = useState<string | null>(null);
+  const [processingPk, setProcessingPk] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<SyncResponse | null>(null);
   const [feedback, setFeedback] = useState<{
     type: "error" | "success";
@@ -138,13 +138,13 @@ export default function HomePage() {
   };
 
   const handleUnfollow = async (pk: string) => {
-    setUnfollowingPk(pk);
+    setProcessingPk(pk);
     setFeedback(null);
     try {
       const result = await relationshipApi.unfollow(pk);
       setFeedback({
         type: "success",
-        message: `Unfollow enviado para ${result.full_name || result.username} (@${result.username}).`,
+        message: `Deixou de seguir ${result.full_name || result.username} (@${result.username}).`,
       });
       await loadProfiles();
     } catch (err) {
@@ -154,7 +154,28 @@ export default function HomePage() {
           err instanceof Error ? err.message : "Falha ao executar unfollow.",
       });
     } finally {
-      setUnfollowingPk(null);
+      setProcessingPk(null);
+    }
+  };
+
+  const handleRemoveFollower = async (pk: string) => {
+    setProcessingPk(pk);
+    setFeedback(null);
+    try {
+      const result = await relationshipApi.removeFollower(pk);
+      setFeedback({
+        type: "success",
+        message: `Seguidor removido: ${result.full_name || result.username} (@${result.username}).`,
+      });
+      await loadProfiles();
+    } catch (err) {
+      setFeedback({
+        type: "error",
+        message:
+          err instanceof Error ? err.message : "Falha ao remover seguidor.",
+      });
+    } finally {
+      setProcessingPk(null);
     }
   };
 
@@ -315,8 +336,10 @@ export default function HomePage() {
                     <ProfileCard
                       key={profile.pk}
                       profile={profile}
-                      isUnfollowing={unfollowingPk === profile.pk}
+                      activeTab={activeTab}
+                      isProcessing={processingPk === profile.pk}
                       onUnfollow={handleUnfollow}
+                      onRemoveFollower={handleRemoveFollower}
                     />
                   ))}
                 </section>

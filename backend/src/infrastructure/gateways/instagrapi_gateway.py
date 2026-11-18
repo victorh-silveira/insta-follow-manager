@@ -225,6 +225,17 @@ class InstagrapiGateway(InstagramGateway):
         except Exception as exc:
             raise GatewayError(f"Error unfollowing user {pk}: {exc}") from exc
 
+    def remove_follower(self, pk: str) -> None:
+        self._ensure_authenticated()
+        try:
+            self._client.user_remove_follower(str(pk))
+        except PleaseWaitFewMinutes as exc:
+            raise RateLimitError(
+                f"Instagram rate limit hit while removing follower {pk}: {exc}"
+            ) from exc
+        except Exception as exc:
+            raise GatewayError(f"Error removing follower {pk}: {exc}") from exc
+
     @staticmethod
     def _map_user(user: Any) -> GatewayProfile:
         return GatewayProfile(

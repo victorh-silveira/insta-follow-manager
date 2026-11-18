@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from src.domain.exceptions import NotFollowingError
+from src.domain.exceptions import NotFollowerError, NotFollowingError
 from src.domain.value_objects.name_bucket import NameBucket, normalize_for_sort
 
 
@@ -35,3 +35,11 @@ class InstagramProfile:
                 f"Profile '{self.username}' (pk={self.pk}) is not in the following list."
             )
         self.is_following = False
+
+    def mark_follower_removed(self) -> None:
+        """Transition state after removing a follower on Instagram."""
+        if not self.is_follower:
+            raise NotFollowerError(
+                f"Profile '{self.username}' (pk={self.pk}) is not in the followers list."
+            )
+        self.is_follower = False
