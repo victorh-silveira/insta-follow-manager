@@ -1,3 +1,13 @@
+## [1.2.1](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.2.0...v1.2.1) (2026-11-18)
+
+### Correcoes de Bug
+
+* **backend:** combina v1 e private_gql sem cache ao sincronizar seguidores ([49274d5](https://github.com/victorh-silveira/insta-follow-manager/commit/49274d5112ab637097c8960ee478a62f86e9d456))
+
+### Documentacao
+
+* **infra:** adicionar README em infra para descolapsar subpasta ([31f1fcb](https://github.com/victorh-silveira/insta-follow-manager/commit/31f1fcbffdda2b09f647ee6387a8b1c85c422d9e))
+
 ## [1.2.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.1.1...v1.2.0) (2026-11-18)
 
 ### Funcionalidades
