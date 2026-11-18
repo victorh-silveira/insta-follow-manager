@@ -40,6 +40,9 @@ class _FakeClient:
         self.remove_follower_error: Exception | None = None
         self.last_use_cache: bool | None = None
         self.last_verification_code: str | None = None
+        self.challenge_code_handler: object | None = None
+        self.trigger_challenge_handler: bool = False
+        self.last_challenge_code_result: str | None = None
 
     def load_settings(self, path: Path) -> None:
         self.loaded_path = path
@@ -58,6 +61,8 @@ class _FakeClient:
 
     def login(self, username: str, password: str, verification_code: str = "") -> None:
         self.last_verification_code = verification_code
+        if self.trigger_challenge_handler and callable(self.challenge_code_handler):
+            self.last_challenge_code_result = self.challenge_code_handler(username, "EMAIL")
         if self.login_error:
             raise self.login_error
 
@@ -271,3 +276,27 @@ def test_instagrapi_gateway_maps_operation_errors(
     fake_client.remove_follower_error = exc_factory()  # type: ignore[operator]
     with pytest.raises(expected_exc):
         gateway.remove_follower("10")
+
+
+def test_instagrapi_gateway_challenge_code_handler_and_session_id(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    fake_client = _FakeClient()
+    fake_client.trigger_challenge_handler = True
+    monkeypatch.setattr(gw_module, "Client", lambda: fake_client)
+
+    session_file = tmp_path / "challenge_session.json"
+    gateway = InstagrapiGateway(session_path=str(session_file))
+
+    with pytest.raises(ChallengeRequiredError):
+        gateway.login("user", "pass")
+    assert session_file.exists()
+
+    account = gateway.login("user", "pass", challenge_code="654321")
+    assert account.is_authenticated is True
+    assert fake_client.last_challenge_code_result == "654321"
+
+    session_account = gateway.login("", "", session_id="sid-cookie")
+    assert session_account.is_authenticated is True
+    assert fake_client.sessionid == "sid-cookie"

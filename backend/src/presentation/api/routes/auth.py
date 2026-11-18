@@ -37,6 +37,8 @@ def login_instagram(
         username=payload.username,
         password=payload.password,
         verification_code=payload.verification_code,
+        challenge_code=payload.challenge_code,
+        session_id=payload.session_id,
     )
     return AuthStatusResponse(**asdict(result))
 

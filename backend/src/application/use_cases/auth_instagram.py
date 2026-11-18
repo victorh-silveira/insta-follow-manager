@@ -38,12 +38,15 @@ class LoginInstagramUseCase:
 
     def execute(
         self,
-        username: str,
-        password: str,
+        username: str = "",
+        password: str = "",
         verification_code: str | None = None,
+        challenge_code: str | None = None,
+        session_id: str | None = None,
     ) -> AuthStatusDTO:
         cleaned_user = username.strip().lstrip("@")
-        if not cleaned_user or not password:
+        cleaned_session_id = session_id.strip() if session_id else None
+        if not cleaned_session_id and (not cleaned_user or not password):
             raise ValueError("Usuario e senha do Instagram sao obrigatorios.")
 
         emit_event(
@@ -51,13 +54,16 @@ class LoginInstagramUseCase:
             logging.INFO,
             "auth.instagram.login_started",
             "Authenticating Instagram account",
-            username=cleaned_user,
+            username=cleaned_user or "sessionid",
             gateway_mode=self._gateway.mode_name,
+            auth_method="sessionid" if cleaned_session_id else "credentials",
         )
         account = self._gateway.login(
             username=cleaned_user,
             password=password,
             verification_code=verification_code.strip() if verification_code else None,
+            challenge_code=challenge_code.strip() if challenge_code else None,
+            session_id=cleaned_session_id,
         )
         emit_event(
             logger,

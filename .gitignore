@@ -16,6 +16,7 @@ htmlcov/
 .ruff_cache/
 .mypy_cache/
 backend/.env
+infra/docker/.env
 session.json
 backend/session.json
 

@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     instagram_gateway: Literal["mock", "instagrapi"] = "mock"
     database_url: str = "sqlite:///./data/insta_manager.db"
     cors_origins: str = "http://localhost:3000"
+    cors_origin_regex: str = (
+        r"^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+"
+        r"|172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+)(:\d+)?$"
+    )
     log_level: str = "INFO"
     log_format: Literal["json", "console"] = "json"
 

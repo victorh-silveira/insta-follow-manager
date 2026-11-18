@@ -97,9 +97,21 @@ class InstagrapiGateway(InstagramGateway):
         username: str,
         password: str,
         verification_code: str | None = None,
+        challenge_code: str | None = None,
+        session_id: str | None = None,
     ) -> AuthAccount:
         self._client = Client()
         self._client.delay_range = [1, 3]
+
+        def _handle_challenge(_target_username: str, _choice: Any) -> str:
+            if challenge_code:
+                return challenge_code
+            raise ChallengeRequiredError(
+                "Instagram solicitou codigo de seguranca por e-mail/SMS. "
+                "Informe o codigo de 6 digitos abaixo e tente novamente."
+            )
+
+        self._client.challenge_code_handler = _handle_challenge
 
         try:
             if self._session_path.exists():
@@ -111,21 +123,23 @@ class InstagrapiGateway(InstagramGateway):
                     "Loaded device settings from session file",
                 )
 
-            if verification_code:
+            if session_id:
+                self._client.login_by_sessionid(session_id)
+            elif verification_code:
                 self._client.login(username, password, verification_code=verification_code)
             else:
                 self._client.login(username, password)
 
-            self._session_path.parent.mkdir(parents=True, exist_ok=True)
-            self._client.dump_settings(self._session_path)
+            self._persist_device_settings()
 
             info = self._client.account_info()
-            self._username = username
+            resolved_username = getattr(info, "username", None) or username
+            self._username = resolved_username
             self._password = password
             self._authenticated = True
             self._account = AuthAccount(
                 is_authenticated=True,
-                username=getattr(info, "username", None) or username,
+                username=resolved_username,
                 full_name=getattr(info, "full_name", None) or "",
                 profile_pic_url=str(info.profile_pic_url)
                 if getattr(info, "profile_pic_url", None)
@@ -140,6 +154,7 @@ class InstagrapiGateway(InstagramGateway):
             )
             return self._account
         except TwoFactorRequired as exc:
+            self._persist_device_settings()
             emit_event(
                 logger,
                 logging.WARNING,
@@ -149,7 +164,17 @@ class InstagrapiGateway(InstagramGateway):
             raise TwoFactorRequiredError(
                 "Codigo de verificacao em duas etapas (2FA) necessario."
             ) from exc
+        except ChallengeRequiredError:
+            self._persist_device_settings()
+            emit_event(
+                logger,
+                logging.WARNING,
+                "gateway.instagrapi.challenge_required",
+                "Instagram security challenge code required",
+            )
+            raise
         except ChallengeRequired as exc:
+            self._persist_device_settings()
             emit_event(
                 logger,
                 logging.WARNING,
@@ -158,7 +183,7 @@ class InstagrapiGateway(InstagramGateway):
             )
             raise ChallengeRequiredError(
                 "Instagram solicitou confirmacao de seguranca (Checkpoint). "
-                "Aprove o login no app e tente novamente."
+                "Informe o codigo enviado por e-mail/SMS ou use o login via Session ID."
             ) from exc
         except LoginRequired as exc:
             raise GatewayAuthError(f"Credenciais ou sessao invalidas no Instagram: {exc}") from exc
@@ -172,6 +197,10 @@ class InstagrapiGateway(InstagramGateway):
             raise RateLimitError(f"Instagram rate limit hit during login: {exc}") from exc
         except Exception as exc:
             raise GatewayError(f"Failed to authenticate with Instagram: {exc}") from exc
+
+    def _persist_device_settings(self) -> None:
+        self._session_path.parent.mkdir(parents=True, exist_ok=True)
+        self._client.dump_settings(self._session_path)
 
     def logout(self) -> None:
         self._authenticated = False

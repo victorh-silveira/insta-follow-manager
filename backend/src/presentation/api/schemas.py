@@ -56,9 +56,11 @@ class RemoveFollowerResponse(BaseModel):
 class LoginRequest(BaseModel):
     """Credentials payload sent from the frontend login form."""
 
-    username: str
-    password: str
+    username: str = ""
+    password: str = ""
     verification_code: str | None = None
+    challenge_code: str | None = None
+    session_id: str | None = None
 
 
 class AuthStatusResponse(BaseModel):

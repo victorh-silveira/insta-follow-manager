@@ -9,8 +9,21 @@ import {
   UnfollowResponse,
 } from "@/types/relationship";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+function resolveApiBaseUrl(): string {
+  const configured = process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== "undefined") {
+    const { protocol, hostname } = window.location;
+    if (
+      hostname &&
+      hostname !== "localhost" &&
+      hostname !== "127.0.0.1" &&
+      (!configured || configured === "http://localhost:8000")
+    ) {
+      return `${protocol}//${hostname}:8000`;
+    }
+  }
+  return configured ?? "http://localhost:8000";
+}
 
 export class ApiError extends Error {
   requires2fa: boolean;
@@ -27,7 +40,7 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${resolveApiBaseUrl()}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",

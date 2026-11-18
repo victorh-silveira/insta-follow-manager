@@ -43,6 +43,8 @@ class InstagramGateway(ABC):
         username: str,
         password: str,
         verification_code: str | None = None,
+        challenge_code: str | None = None,
+        session_id: str | None = None,
     ) -> AuthAccount:
         """Authenticate against Instagram and persist session state."""
 

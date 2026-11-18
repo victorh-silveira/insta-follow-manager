@@ -65,7 +65,9 @@ export interface AuthStatus {
 }
 
 export interface LoginPayload {
-  username: string;
-  password: string;
+  username?: string;
+  password?: string;
   verification_code?: string;
+  challenge_code?: string;
+  session_id?: string;
 }

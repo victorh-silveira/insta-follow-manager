@@ -196,7 +196,14 @@ def test_auth_endpoints_status_login_logout(tmp_path: Path) -> None:
 )
 def test_auth_login_2fa_and_challenge_responses(exc: Exception, expected_flag: str) -> None:
     class AuthErrorGateway(MockInstagramGateway):
-        def login(self, username: str, password: str, verification_code: str | None = None):  # type: ignore[override]
+        def login(  # type: ignore[override]
+            self,
+            username: str,
+            password: str,
+            verification_code: str | None = None,
+            challenge_code: str | None = None,
+            session_id: str | None = None,
+        ):
             raise exc
 
     app = create_app()
@@ -250,3 +257,16 @@ def test_not_following_back_list_and_unfollow_also_removes_follower(
     for profile in reverse_resp.json()["profiles"]:
         assert profile["is_follower"] is True
         assert profile["is_following"] is False
+
+
+def test_login_with_session_id_and_challenge_code(client: TestClient) -> None:
+    session_resp = client.post("/api/auth/login", json={"session_id": "cookie-123"})
+    assert session_resp.status_code == 200
+    assert session_resp.json()["authenticated"] is True
+
+    challenge_resp = client.post(
+        "/api/auth/login",
+        json={"username": "u", "password": "p", "challenge_code": "123456"},
+    )
+    assert challenge_resp.status_code == 200
+    assert challenge_resp.json()["authenticated"] is True

@@ -75,9 +75,11 @@ class MockInstagramGateway(InstagramGateway):
         username: str,
         password: str,
         verification_code: str | None = None,
+        challenge_code: str | None = None,
+        session_id: str | None = None,
     ) -> AuthAccount:
         self._authenticated = True
-        self._username = username
+        self._username = username or "demo_user"
         return self.get_auth_status()
 
     def logout(self) -> None:

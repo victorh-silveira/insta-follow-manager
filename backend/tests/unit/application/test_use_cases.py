@@ -87,9 +87,18 @@ class FakeInstagramGateway(InstagramGateway):
     def get_auth_status(self) -> AuthAccount:
         return AuthAccount(is_authenticated=self.authenticated, username="fake_user")
 
-    def login(self, username: str, password: str, verification_code: str | None = None) -> AuthAccount:
+    def login(
+        self,
+        username: str,
+        password: str,
+        verification_code: str | None = None,
+        challenge_code: str | None = None,
+        session_id: str | None = None,
+    ) -> AuthAccount:
         self.authenticated = True
-        return AuthAccount(is_authenticated=True, username=username)
+        self.last_challenge_code = challenge_code
+        self.last_session_id = session_id
+        return AuthAccount(is_authenticated=True, username=username or "session_user")
 
     def logout(self) -> None:
         self.authenticated = False
@@ -284,3 +293,18 @@ def test_list_not_following_back_returns_followers_not_followed_back() -> None:
     )
 
     assert [p.pk for p in result.profiles] == ["6"]
+
+
+def test_login_instagram_use_case_with_session_id() -> None:
+    gateway = FakeInstagramGateway()
+    from src.application.use_cases.auth_instagram import LoginInstagramUseCase
+
+    account = LoginInstagramUseCase(gateway).execute(
+        username="",
+        password="",
+        session_id="sid-xyz",
+    )
+
+    assert account.authenticated is True
+    assert account.username == "session_user"
+    assert gateway.last_session_id == "sid-xyz"
