@@ -42,6 +42,8 @@ class InMemoryProfileRepository(ProfileRepository):
             return [p for p in self._store.values() if p.is_following]
         if list_type == RelationshipListType.FOLLOWERS:
             return [p for p in self._store.values() if p.is_follower]
+        if list_type == RelationshipListType.NOT_FOLLOWING_BACK:
+            return [p for p in self._store.values() if p.is_follower and not p.is_following]
         return [p for p in self._store.values() if p.is_following and not p.is_follower]
 
     def find_by_filter(
@@ -251,3 +253,35 @@ def test_remove_follower_errors_for_missing_or_non_follower() -> None:
 
     with pytest.raises(NotFollowerError):
         RemoveFollowerUseCase(gateway, repo).execute("2")
+
+
+def test_unfollow_mutual_profile_also_removes_follower() -> None:
+    repo = InMemoryProfileRepository()
+    gateway = FakeInstagramGateway()
+    SyncRelationshipsUseCase(gateway, repo).execute()
+
+    # pk="1" (Ana Julia) segue e e seguida (mutua)
+    result = UnfollowProfileUseCase(gateway, repo).execute("1")
+
+    assert result.unfollowed is True
+    assert result.follower_removed is True
+    assert gateway.unfollowed_pks == ["1"]
+    assert gateway.removed_follower_pks == ["1"]
+
+    ana = repo.get_by_pk("1")
+    assert ana is not None
+    assert ana.is_following is False
+    assert ana.is_follower is False
+
+
+def test_list_not_following_back_returns_followers_not_followed_back() -> None:
+    repo = InMemoryProfileRepository()
+    gateway = FakeInstagramGateway()
+    SyncRelationshipsUseCase(gateway, repo).execute()
+
+    result = ListProfilesByBucketUseCase(repo).execute(
+        list_type=RelationshipListType.NOT_FOLLOWING_BACK,
+        bucket="ALL",
+    )
+
+    assert [p.pk for p in result.profiles] == ["6"]

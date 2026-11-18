@@ -61,6 +61,7 @@ class UnfollowResultDTO:
     username: str
     full_name: str
     unfollowed: bool
+    follower_removed: bool = False
 
 
 @dataclass(frozen=True)

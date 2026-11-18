@@ -12,6 +12,7 @@ class RelationshipListType(StrEnum):
     FOLLOWING = "following"
     FOLLOWERS = "followers"
     NON_FOLLOWERS = "non_followers"
+    NOT_FOLLOWING_BACK = "not_following_back"
 
 
 class ProfileRepository(ABC):

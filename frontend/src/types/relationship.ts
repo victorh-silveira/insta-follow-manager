@@ -1,4 +1,8 @@
-export type RelationshipListType = "following" | "followers" | "non_followers";
+export type RelationshipListType =
+  | "following"
+  | "followers"
+  | "non_followers"
+  | "not_following_back";
 
 export const LETTER_BUCKETS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export const DIGITS_BUCKET = "0-9";
@@ -37,6 +41,7 @@ export interface UnfollowResponse {
   username: string;
   full_name: string;
   unfollowed: boolean;
+  follower_removed?: boolean;
 }
 
 export interface RemoveFollowerResponse {

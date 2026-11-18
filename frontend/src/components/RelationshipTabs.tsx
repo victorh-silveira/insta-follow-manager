@@ -37,6 +37,13 @@ const TABS: {
       "bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-sm shadow-rose-500/25",
     badgeClass: "bg-white/20 text-white",
   },
+  {
+    id: "not_following_back",
+    label: "Não sigo de volta",
+    activeClass:
+      "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/25",
+    badgeClass: "bg-white/20 text-white",
+  },
 ];
 
 export function RelationshipTabs({

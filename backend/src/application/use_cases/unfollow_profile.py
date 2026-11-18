@@ -55,6 +55,21 @@ class UnfollowProfileUseCase:
 
         self._gateway.unfollow(pk)
         profile.mark_unfollowed()
+
+        follower_removed = False
+        if profile.is_follower:
+            self._gateway.remove_follower(pk)
+            profile.mark_follower_removed()
+            follower_removed = True
+            emit_event(
+                logger,
+                logging.INFO,
+                "relationships.unfollow.follower_also_removed",
+                "Also removed unfollowed user from followers",
+                pk=pk,
+                username=profile.username,
+            )
+
         self._repository.save(profile)
 
         emit_event(
@@ -65,6 +80,7 @@ class UnfollowProfileUseCase:
             pk=pk,
             username=profile.username,
             bucket=profile.bucket,
+            follower_removed=follower_removed,
         )
 
         return UnfollowResultDTO(
@@ -72,4 +88,5 @@ class UnfollowProfileUseCase:
             username=profile.username,
             full_name=profile.full_name,
             unfollowed=True,
+            follower_removed=follower_removed,
         )

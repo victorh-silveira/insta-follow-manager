@@ -26,6 +26,11 @@ _FILTER_QUERIES: dict[RelationshipListType, str] = {
         "AND (? IS NULL OR bucket = ?) "
         "AND (? IS NULL OR LOWER(full_name) LIKE ? OR LOWER(username) LIKE ?)"
     ),
+    RelationshipListType.NOT_FOLLOWING_BACK: (
+        "SELECT * FROM profiles WHERE is_following = 0 AND is_follower = 1 "
+        "AND (? IS NULL OR bucket = ?) "
+        "AND (? IS NULL OR LOWER(full_name) LIKE ? OR LOWER(username) LIKE ?)"
+    ),
 }
 
 _COUNT_QUERIES: dict[RelationshipListType, str] = {
@@ -38,6 +43,10 @@ _COUNT_QUERIES: dict[RelationshipListType, str] = {
     RelationshipListType.NON_FOLLOWERS: (
         "SELECT bucket, COUNT(*) AS total FROM profiles "
         "WHERE is_following = 1 AND is_follower = 0 GROUP BY bucket"
+    ),
+    RelationshipListType.NOT_FOLLOWING_BACK: (
+        "SELECT bucket, COUNT(*) AS total FROM profiles "
+        "WHERE is_following = 0 AND is_follower = 1 GROUP BY bucket"
     ),
 }
 

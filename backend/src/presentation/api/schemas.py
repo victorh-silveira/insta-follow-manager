@@ -41,6 +41,7 @@ class UnfollowResponse(BaseModel):
     username: str
     full_name: str
     unfollowed: bool
+    follower_removed: bool = False
 
 
 class RemoveFollowerResponse(BaseModel):

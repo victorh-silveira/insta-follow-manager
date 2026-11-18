@@ -34,7 +34,8 @@ export function ProfileCard({
   const displayName = profile.full_name.trim() || "(Sem nome de exibição)";
   const showAvatarImage = Boolean(profile.profile_pic_url) && !imageError;
 
-  const isFollowerMode = activeTab === "followers";
+  const isFollowerMode =
+    activeTab === "followers" || activeTab === "not_following_back";
   const canAct = isFollowerMode ? profile.is_follower : profile.is_following;
   const actionLabel = isFollowerMode ? "Remover seguidor" : "Remover seguindo";
 

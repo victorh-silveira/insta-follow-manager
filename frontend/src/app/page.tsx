@@ -142,9 +142,12 @@ export default function HomePage() {
     setFeedback(null);
     try {
       const result = await relationshipApi.unfollow(pk);
+      const nameLabel = `${result.full_name || result.username} (@${result.username})`;
       setFeedback({
         type: "success",
-        message: `Deixou de seguir ${result.full_name || result.username} (@${result.username}).`,
+        message: result.follower_removed
+          ? `Deixou de seguir ${nameLabel} e removeu dos seguidores.`
+          : `Deixou de seguir ${nameLabel}.`,
       });
       await loadProfiles();
     } catch (err) {
