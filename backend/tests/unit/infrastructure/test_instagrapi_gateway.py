@@ -35,8 +35,10 @@ class _FakeClient:
         self.account_error: Exception | None = None
         self.following_error: Exception | None = None
         self.followers_error: Exception | None = None
+        self.followers_gql_error: Exception | None = None
         self.unfollow_error: Exception | None = None
         self.remove_follower_error: Exception | None = None
+        self.last_use_cache: bool | None = None
         self.last_verification_code: str | None = None
 
     def load_settings(self, path: Path) -> None:
@@ -63,7 +65,10 @@ class _FakeClient:
         self.dumped_path = path
         path.write_text('{"session": true}', encoding="utf-8")
 
-    def user_following(self, user_id: int, amount: int = 0) -> dict[str, SimpleNamespace]:
+    def user_following(
+        self, user_id: int, use_cache: bool = True, amount: int = 0
+    ) -> dict[str, SimpleNamespace]:
+        self.last_use_cache = use_cache
         if self.following_error:
             raise self.following_error
         return {
@@ -76,18 +81,38 @@ class _FakeClient:
             )
         }
 
-    def user_followers(self, user_id: int, amount: int = 0) -> dict[str, SimpleNamespace]:
+    def user_followers_v1(self, user_id: int, amount: int = 0) -> list[SimpleNamespace]:
         if self.followers_error:
             raise self.followers_error
-        return {
-            "2": SimpleNamespace(
+        return [
+            SimpleNamespace(
                 pk=2,
                 username="bruno",
                 full_name="Bruno Lima",
                 profile_pic_url=None,
                 is_verified=False,
             )
-        }
+        ]
+
+    def user_followers_private_gql(self, user_id: int, amount: int = 0) -> list[SimpleNamespace]:
+        if self.followers_gql_error:
+            raise self.followers_gql_error
+        return [
+            SimpleNamespace(
+                pk=2,
+                username="bruno",
+                full_name="Bruno Lima",
+                profile_pic_url=None,
+                is_verified=False,
+            ),
+            SimpleNamespace(
+                pk=3,
+                username="lucasants02",
+                full_name="Lucas Santos",
+                profile_pic_url=None,
+                is_verified=False,
+            ),
+        ]
 
     def user_unfollow(self, user_id: int) -> None:
         if self.unfollow_error:
@@ -159,8 +184,8 @@ def test_instagrapi_gateway_loads_session_and_executes_operations(
     assert following[0].is_verified is True
 
     followers = gateway.fetch_followers()
-    assert len(followers) == 1
-    assert followers[0].pk == "2"
+    assert len(followers) == 2
+    assert {f.pk for f in followers} == {"2", "3"}
 
     gateway.unfollow("102")
     assert fake_client.unfollowed == [102]
@@ -219,16 +244,26 @@ def test_instagrapi_gateway_maps_operation_errors(
 
     gateway = InstagrapiGateway("user", "pass", str(tmp_path / "session.json"))
     gateway.fetch_following()
+    assert fake_client.last_use_cache is False
+
+    followers = gateway.fetch_followers()
+    assert {f.username for f in followers} == {"bruno", "lucasants02"}
 
     fake_client.following_error = exc_factory()  # type: ignore[operator]
     with pytest.raises(expected_exc):
         gateway.fetch_following()
     fake_client.following_error = None
 
+    fake_client.followers_error = RuntimeError("v1 partial failure")
+    partial_followers = gateway.fetch_followers()
+    assert {f.username for f in partial_followers} == {"bruno", "lucasants02"}
+
     fake_client.followers_error = exc_factory()  # type: ignore[operator]
+    fake_client.followers_gql_error = exc_factory()  # type: ignore[operator]
     with pytest.raises(expected_exc):
         gateway.fetch_followers()
     fake_client.followers_error = None
+    fake_client.followers_gql_error = None
 
     fake_client.unfollow_error = exc_factory()  # type: ignore[operator]
     with pytest.raises(expected_exc):

@@ -198,7 +198,7 @@ class InstagrapiGateway(InstagramGateway):
         self._ensure_authenticated()
         try:
             user_id = self._client.user_id
-            raw_users = self._client.user_following(user_id, amount=0)
+            raw_users = self._client.user_following(user_id, use_cache=False, amount=0)
             return [self._map_user(user) for user in raw_users.values()]
         except PleaseWaitFewMinutes as exc:
             raise RateLimitError(f"Instagram rate limit hit while fetching following: {exc}") from exc
@@ -207,14 +207,40 @@ class InstagrapiGateway(InstagramGateway):
 
     def fetch_followers(self) -> list[GatewayProfile]:
         self._ensure_authenticated()
-        try:
-            user_id = self._client.user_id
-            raw_users = self._client.user_followers(user_id, amount=0)
-            return [self._map_user(user) for user in raw_users.values()]
-        except PleaseWaitFewMinutes as exc:
-            raise RateLimitError(f"Instagram rate limit hit while fetching followers: {exc}") from exc
-        except Exception as exc:
-            raise GatewayError(f"Error fetching followers list: {exc}") from exc
+        user_id = self._client.user_id
+        merged: dict[str, GatewayProfile] = {}
+        last_error: Exception | None = None
+        succeeded = False
+
+        for source_name, loader in (
+            ("v1", self._client.user_followers_v1),
+            ("private_gql", self._client.user_followers_private_gql),
+        ):
+            try:
+                raw_users = loader(user_id, amount=0)
+                succeeded = True
+                for user in raw_users:
+                    profile = self._map_user(user)
+                    merged.setdefault(profile.pk, profile)
+            except PleaseWaitFewMinutes as exc:
+                raise RateLimitError(
+                    f"Instagram rate limit hit while fetching followers ({source_name}): {exc}"
+                ) from exc
+            except Exception as exc:
+                last_error = exc
+                emit_event(
+                    logger,
+                    logging.WARNING,
+                    "gateway.instagrapi.followers_source_failed",
+                    "Follower source failed; trying remaining source",
+                    source=source_name,
+                    error=str(exc),
+                )
+
+        if not succeeded:
+            raise GatewayError(f"Error fetching followers list: {last_error}") from last_error
+
+        return list(merged.values())
 
     def unfollow(self, pk: str) -> None:
         self._ensure_authenticated()
