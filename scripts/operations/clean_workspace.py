@@ -88,10 +88,17 @@ def run_python(stage: str, coverage_fail_under: int) -> int:
         return run_cmd([py, "-c", "from src.presentation.main import app; assert app is not None"], BACKEND_DIR)
 
     if stage == "clean":
-        for folder in (".pytest_cache", ".ruff_cache", ".mypy_cache", "htmlcov"):
+        for folder in (".pytest_cache", ".ruff_cache", ".mypy_cache", "htmlcov", "build"):
             target = BACKEND_DIR / folder
             if target.exists():
                 shutil.rmtree(target, ignore_errors=True)
+        for root_folder in ("build",):
+            target = ROOT_DIR / root_folder
+            if target.exists():
+                shutil.rmtree(target, ignore_errors=True)
+        for cov_file in (ROOT_DIR / ".coverage", BACKEND_DIR / ".coverage"):
+            if cov_file.exists():
+                cov_file.unlink(missing_ok=True)
         return 0
 
     raise ValueError(f"Unsupported stage for python: {stage}")

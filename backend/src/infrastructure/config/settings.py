@@ -16,14 +16,14 @@ class Settings(BaseSettings):
     )
 
     instagram_gateway: Literal["mock", "instagrapi"] = "mock"
-    database_url: str = "sqlite:///./insta_manager.db"
+    database_url: str = "sqlite:///./data/insta_manager.db"
     cors_origins: str = "http://localhost:3000"
     log_level: str = "INFO"
     log_format: Literal["json", "console"] = "json"
 
     ig_username: str = ""
     ig_password: str = ""
-    ig_session_path: str = "./session.json"
+    ig_session_path: str = "./data/session.json"
 
     @property
     def sqlite_path(self) -> str:

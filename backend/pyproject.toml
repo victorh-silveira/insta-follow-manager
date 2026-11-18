@@ -14,3 +14,9 @@ ignore = ["B008"]
 
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
+
+[tool.coverage.run]
+data_file = "build/.coverage"
+
+[tool.coverage.html]
+directory = "build/htmlcov"

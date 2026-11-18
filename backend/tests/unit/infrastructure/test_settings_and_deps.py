@@ -10,6 +10,10 @@ from src.presentation.api import dependencies
 
 
 def test_settings_sqlite_path_fallback() -> None:
+    default_settings = Settings()
+    assert default_settings.database_url == "sqlite:///./data/insta_manager.db"
+    assert default_settings.ig_session_path == "./data/session.json"
+
     s = Settings(database_url="/tmp/custom.db")
     assert s.sqlite_path == "/tmp/custom.db"
 
