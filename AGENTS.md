@@ -12,6 +12,7 @@ Ponto de entrada unico e canonico para agentes autonomos de IA e desenvolvedores
   - Comunicacao com servicos externos ocorre exclusivamente via Ports (`InstagramGateway`, `ProfileRepository`) e Adapters na camada `infrastructure/`.
 - **Frontend:** React + Next.js (App Router, TypeScript) + Tailwind CSS com build `standalone`.
 - **Integridade de Codigo:** Funcoes pequenas, responsabilidade unica, zero duplicacao de logica e docstrings claras.
+- **Proibicao de Comentarios em Codigo:** E **100% proibido** escrever comentarios (`#`, `//`, `/* */`) em codigo-fonte e testes (`backend/src/`, `backend/tests/`, `frontend/src/`, `scripts/`). O codigo deve ser autoexplicativo por nomes claros e docstrings concisas; apenas diretivas tecnicas obrigatorias de ferramentas (`# type: ignore[...]`, `eslint-disable-next-line`, shebangs) sao toleradas quando inevitaveis.
 - **Contrato de Commits:** Seguir rigorosamente Conventional Commits em **PT-BR** validados por `linters/commitlint.config.mjs`.
 
 ---

@@ -143,19 +143,15 @@ def test_instagrapi_gateway_resumes_cached_session_and_handles_invalid_session(
     session_file.write_text("{}", encoding="utf-8")
 
     gateway = InstagrapiGateway(session_path=str(session_file))
-    # Resumes session automatically inside _ensure_authenticated()
     assert len(gateway.fetch_following()) == 1
     status = gateway.get_auth_status()
     assert status.is_authenticated is True
     assert status.username == "victor.real"
-    # Second call hits cached _account branch
     assert gateway.get_auth_status().username == "victor.real"
 
-    # Logout clears session file
     gateway.logout()
     assert not session_file.exists()
 
-    # Invalid session file falls back gracefully to unauthenticated
     session_file.write_text("{}", encoding="utf-8")
     fake_client.account_error = RuntimeError("expired")
     assert gateway.get_auth_status().is_authenticated is False
@@ -173,7 +169,6 @@ def test_instagrapi_gateway_loads_session_and_executes_operations(
     gateway = InstagrapiGateway("user", "pass", str(session_file))
     assert gateway.mode_name == "instagrapi"
 
-    # Explicit login with existing session_file loads device settings & dumps updated session
     gateway.login("user", "pass")
     assert fake_client.loaded_path == session_file
     assert fake_client.dumped_path == session_file

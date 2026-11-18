@@ -87,6 +87,5 @@ def configure_logging(level: str = "INFO", fmt: str = "json") -> None:
     root.addHandler(handler)
     root.setLevel(getattr(logging, level.upper(), logging.INFO))
 
-    # Avoid duplicate unformatted access logs from uvicorn; handled by RequestLoggingMiddleware.
     logging.getLogger("uvicorn.access").handlers.clear()
     logging.getLogger("uvicorn.access").propagate = False

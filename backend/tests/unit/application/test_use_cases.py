@@ -260,7 +260,6 @@ def test_unfollow_mutual_profile_also_removes_follower() -> None:
     gateway = FakeInstagramGateway()
     SyncRelationshipsUseCase(gateway, repo).execute()
 
-    # pk="1" (Ana Julia) segue e e seguida (mutua)
     result = UnfollowProfileUseCase(gateway, repo).execute("1")
 
     assert result.unfollowed is True

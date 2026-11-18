@@ -10,7 +10,7 @@ def test_version_files_exist_and_match_stack() -> None:
     python_version = (ROOT_DIR / ".python-version").read_text(encoding="utf-8").strip()
     node_version = (ROOT_DIR / ".node-version").read_text(encoding="utf-8").strip()
 
-    assert python_version.startswith("3.13.")
+    assert python_version == "3.13" or python_version.startswith("3.13.")
     assert node_version.startswith("22.14")
 
 

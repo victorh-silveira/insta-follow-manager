@@ -8,3 +8,4 @@ alwaysApply: true
 - Qualquer alteracao deve manter paridade entre `.pre-commit-config.yaml`, `Makefile` e `.github/workflows/ci.yml` atraves de `scripts/operations/clean_workspace.py`.
 - Nunca commitar arquivos `.env`, `session.json`, bancos `*.db` ou segredos reais.
 - Manter `.env.example` atualizado sempre que novas variaveis de ambiente forem introduzidas.
+- **Zero Comentarios em Codigo:** E 100% proibido adicionar comentarios explicativos ou decorativos (`#`, `//`, `/* */`) em codigo-fonte e testes (`backend/src/`, `backend/tests/`, `frontend/src/`, `scripts/`). Use nomes autoexplicativos e docstrings concisas; apenas diretivas tecnicas obrigatorias (`# type: ignore[...]`, `eslint-disable-next-line`, shebangs) sao toleradas quando inevitaveis.

@@ -236,18 +236,15 @@ def test_not_following_back_list_and_unfollow_also_removes_follower(
 ) -> None:
     client.post("/api/relationships/sync")
 
-    # Localiza um perfil mutuo (segue e e seguidor) na lista following
     following_resp = client.get("/api/relationships?list_type=following&bucket=ALL")
     assert following_resp.status_code == 200
     mutual = next(p for p in following_resp.json()["profiles"] if p["is_follower"])
 
-    # Ao dar unfollow em perfil mutuo, tambem remove dos seguidores automaticamente
     unfollow_resp = client.post(f"/api/relationships/{mutual['pk']}/unfollow")
     assert unfollow_resp.status_code == 200
     assert unfollow_resp.json()["unfollowed"] is True
     assert unfollow_resp.json()["follower_removed"] is True
 
-    # Perfis que seguem mas nao sigo de volta (not_following_back)
     reverse_resp = client.get("/api/relationships?list_type=not_following_back&bucket=ALL")
     assert reverse_resp.status_code == 200
     for profile in reverse_resp.json()["profiles"]:
