@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.2.1...v1.3.0) (2026-11-18)
+
+### Funcionalidades
+
+* **all:** adiciona aba nao sigo de volta e unfollow mutuo ([ab3e22f](https://github.com/victorh-silveira/insta-follow-manager/commit/ab3e22f45ddc394c0d457d907aecee200d3ea6ab))
+
 ## [1.2.1](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.2.0...v1.2.1) (2026-11-18)
 
 ### Correcoes de Bug
