@@ -3,13 +3,13 @@
 ## Praticas Seniores Aplicadas
 
 - **Multi-stage builds**:
-  - `backend/Dockerfile`: `python:3.13.9-slim-bookworm` (`builder` -> `runtime`), copiando apenas `/opt/venv` e `src/`.
-  - `frontend/Dockerfile`: `node:22.14-alpine` (`deps` -> `builder` -> `runner`) com Next.js `output: "standalone"`.
+  - `infra/docker/backend.Dockerfile`: `python:3.13.9-slim-bookworm` (`builder` -> `runtime`), copiando apenas `/opt/venv` e `backend/src/`.
+  - `infra/docker/frontend.Dockerfile`: `node:22.14-alpine` (`deps` -> `builder` -> `runner`) com Next.js `output: "standalone"`.
 - **Menor Privilegio (`USER`)**:
   - Containers executam como usuarios sem privilegios e sem shell de login (`appuser` e `nextjs`, UID `10001`).
 - **PID 1 e Graceful Shutdown**:
   - `tini` + `init: true` + `CMD` em forma exec para repasse correto de `SIGTERM`.
-- **Redes, Portas e Volumes (`docker-compose.yml`)**:
+- **Redes, Portas e Volumes (`infra/docker/docker-compose.yml`)**:
   - Rede isolada `insta_net` (`bridge`).
   - Portas vinculadas exclusivamente em `127.0.0.1` (`127.0.0.1:8000:8000` e `127.0.0.1:3000:3000`).
   - `depends_on` com `condition: service_healthy` e `healthcheck` real em ambos os servicos.

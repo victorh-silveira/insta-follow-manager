@@ -1,0 +1,22 @@
+name: CI - Setup Node
+description: Configura Node.js a partir do arquivo canonico .node-version na raiz
+
+inputs:
+  cache:
+    description: Gerenciador de cache opcional (ex. npm)
+    required: false
+    default: ""
+  cache-dependency-path:
+    description: Caminho opcional do lockfile para cache
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v7
+      with:
+        node-version-file: .node-version
+        cache: ${{ inputs.cache }}
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}

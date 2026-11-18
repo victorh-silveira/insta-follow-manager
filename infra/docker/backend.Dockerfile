@@ -13,7 +13,7 @@ WORKDIR /build
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY requirements.txt ./
+COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir pip==26.3 && pip install --no-cache-dir -r requirements.txt
 
 # --- Stage 2: Minimal Non-Root Runtime ---
@@ -21,6 +21,15 @@ FROM python:3.13.9-slim-bookworm AS runtime
 
 ARG APP_UID=10001
 ARG APP_GID=10001
+ARG IMAGE_VERSION=dev
+ARG BUILD_DATE=unknown
+ARG VCS_REF=unknown
+
+LABEL org.opencontainers.image.title="insta-follow-manager-backend" \
+      org.opencontainers.image.description="API FastAPI para triagem e unfollow no Instagram" \
+      org.opencontainers.image.version="${IMAGE_VERSION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -39,7 +48,7 @@ RUN groupadd --gid "${APP_GID}" appgroup \
 WORKDIR /app
 
 COPY --from=builder --chown=appuser:appgroup /opt/venv /opt/venv
-COPY --chown=appuser:appgroup src ./src
+COPY --chown=appuser:appgroup backend/src ./src
 
 # Persistent directory for SQLite / session volume
 RUN mkdir -p /app/data && chown -R appuser:appgroup /app/data

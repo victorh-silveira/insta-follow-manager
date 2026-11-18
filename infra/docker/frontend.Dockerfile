@@ -4,7 +4,7 @@
 FROM node:22.14-alpine AS deps
 
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 
 # --- Stage 2: Build Standalone Bundle ---
@@ -12,7 +12,7 @@ FROM node:22.14-alpine AS builder
 
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY frontend/ .
 
 ARG NEXT_PUBLIC_API_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} \
@@ -25,6 +25,15 @@ FROM node:22.14-alpine AS runner
 
 ARG APP_UID=10001
 ARG APP_GID=10001
+ARG IMAGE_VERSION=dev
+ARG BUILD_DATE=unknown
+ARG VCS_REF=unknown
+
+LABEL org.opencontainers.image.title="insta-follow-manager-frontend" \
+      org.opencontainers.image.description="Interface Next.js para triagem de seguidores" \
+      org.opencontainers.image.version="${IMAGE_VERSION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}"
 
 WORKDIR /app
 

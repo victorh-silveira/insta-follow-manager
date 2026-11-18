@@ -13,7 +13,9 @@ on:
       - "scripts/**"
       - "backend/**"
       - "frontend/**"
-      - "docker-compose.yml"
+      - "infra/docker/**"
+      - ".python-version"
+      - ".node-version"
       - "Makefile"
   pull_request:
     branches: [main]
@@ -37,9 +39,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: "22"
+        uses: ./.github/actions/ci/setup-node
       - name: Commitlint (Conventional Commits)
         shell: bash
         run: |
@@ -61,9 +61,7 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.13"
+        uses: ./.github/actions/ci/setup-python
       - name: Instalar dependencias Python
         shell: bash
         run: |
@@ -89,9 +87,8 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: ./.github/actions/ci/setup-node
         with:
-          node-version: "22"
           cache: "npm"
           cache-dependency-path: "frontend/package-lock.json"
       - name: Instalar dependencias Node
@@ -116,9 +113,8 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: ./.github/actions/ci/setup-node
         with:
-          node-version: "22"
           cache: "npm"
           cache-dependency-path: "frontend/package-lock.json"
       - name: Instalar dependencias Node
@@ -143,9 +139,8 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: ./.github/actions/ci/setup-node
         with:
-          node-version: "22"
           cache: "npm"
           cache-dependency-path: "frontend/package-lock.json"
       - name: Instalar dependencias Node
@@ -170,9 +165,8 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v7
+        uses: ./.github/actions/ci/setup-node
         with:
-          node-version: "22"
           cache: "npm"
           cache-dependency-path: "frontend/package-lock.json"
       - name: Instalar dependencias Node
@@ -197,9 +191,7 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.13"
+        uses: ./.github/actions/ci/setup-python
       - name: Instalar Hadolint
         shell: bash
         run: |
@@ -225,9 +217,7 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.13"
+        uses: ./.github/actions/ci/setup-python
       - name: Shell | Lint
         run: python scripts/operations/clean_workspace.py --area shell --stage lint
       - name: Shell | Validate
@@ -247,9 +237,7 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.13"
+        uses: ./.github/actions/ci/setup-python
       - name: JSON | Lint
         run: python scripts/operations/clean_workspace.py --area json --stage lint
       - name: JSON | Validate
@@ -269,9 +257,7 @@ jobs:
       - name: Obter codigo fonte
         uses: actions/checkout@v7
       - name: Setup Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.13"
+        uses: ./.github/actions/ci/setup-python
       - name: Instalar PyYAML e Yamllint
         run: pip install pyyaml yamllint
       - name: YAML | Lint

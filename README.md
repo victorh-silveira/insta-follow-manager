@@ -12,7 +12,7 @@
 [![Security](https://img.shields.io/badge/security-bandit%20%7C%20gitleaks-C0392B)](.gitleaks.toml)
 [![Pre-commit](https://img.shields.io/badge/pre--commit-16%20gates%20ativos-FAB040?logo=pre-commit&logoColor=white)](.pre-commit-config.yaml)
 [![Commits](https://img.shields.io/badge/commits-Conventional%20Commits%20PT--BR-FE5196?logo=conventionalcommits&logoColor=white)](linters/commitlint.config.mjs)
-[![Docker Compose](https://img.shields.io/badge/infra-Docker%20Compose-2496ED?logo=docker&logoColor=white)](docker-compose.yml)
+[![Docker Compose](https://img.shields.io/badge/infra-Docker%20Compose-2496ED?logo=docker&logoColor=white)](infra/docker/docker-compose.yml)
 
 Aplicacao full-stack para sincronizacao, triagem alfabetica e gerenciamento de listas de **Seguindo** (*Following*) e **Seguidores** (*Followers*) do Instagram pelo **nome de exibicao** (`full_name`), com filtro instantaneo (**A–Z**, **0–9** e **Caracteres Especiais**) e acao direta de **Unfollow**.
 

@@ -1,0 +1,10 @@
+name: CI - Setup Python
+description: Configura Python a partir do arquivo canonico .python-version na raiz
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v7
+      with:
+        python-version-file: .python-version

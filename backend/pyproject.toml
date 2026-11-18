@@ -1,3 +1,9 @@
+[project]
+name = "insta-follow-manager-backend"
+version = "0.1.0"
+description = "Backend FastAPI com arquitetura DDD para triagem alfabetica no Instagram"
+requires-python = ">=3.13,<3.14"
+
 [tool.ruff]
 target-version = "py313"
 line-length = 105

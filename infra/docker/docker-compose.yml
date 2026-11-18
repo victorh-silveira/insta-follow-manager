@@ -1,15 +1,31 @@
+name: insta-follow-manager
+
+x-logging: &insta-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: infra/docker/backend.Dockerfile
       args:
         APP_UID: ${APP_UID:-10001}
         APP_GID: ${APP_GID:-10001}
+        IMAGE_VERSION: ${IMAGE_VERSION:-dev}
+        BUILD_DATE: ${BUILD_DATE:-unknown}
+        VCS_REF: ${VCS_REF:-unknown}
     container_name: insta-manager-backend
     restart: unless-stopped
+    logging: *insta-logging
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     env_file:
-      - path: ./backend/.env
+      - path: ../../backend/.env
         required: false
     environment:
       INSTAGRAM_GATEWAY: ${INSTAGRAM_GATEWAY:-instagrapi}
@@ -42,14 +58,22 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: infra/docker/frontend.Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
         APP_UID: ${APP_UID:-10001}
         APP_GID: ${APP_GID:-10001}
+        IMAGE_VERSION: ${IMAGE_VERSION:-dev}
+        BUILD_DATE: ${BUILD_DATE:-unknown}
+        VCS_REF: ${VCS_REF:-unknown}
     container_name: insta-manager-frontend
     restart: unless-stopped
+    logging: *insta-logging
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     depends_on:
       backend:
         condition: service_healthy
@@ -75,12 +99,17 @@ services:
           cpus: "1.0"
           memory: 512M
 
-  # Optional on-demand log viewer: `docker compose --profile debug up -d`
+  # Visualizador de logs sob demanda: `make docker-debug-up`
   log-viewer:
     image: amir20/dozzle:v8.12.4
     container_name: insta-manager-logs
     profiles: ["debug"]
     restart: unless-stopped
+    logging: *insta-logging
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     ports:
       - "127.0.0.1:8888:8080"
     volumes:

@@ -207,7 +207,12 @@ def run_tailwind(stage: str) -> int:
 
 
 def run_docker(stage: str) -> int:
-    dockerfiles = [BACKEND_DIR / "Dockerfile", FRONTEND_DIR / "Dockerfile"]
+    infra_docker = ROOT_DIR / "infra" / "docker"
+    compose_file = infra_docker / "docker-compose.yml"
+    dockerfiles = [
+        infra_docker / "backend.Dockerfile",
+        infra_docker / "frontend.Dockerfile",
+    ]
     if stage == "lint":
         if shutil.which("hadolint"):
             for df in dockerfiles:
@@ -222,7 +227,10 @@ def run_docker(stage: str) -> int:
         return 0
     if stage == "validate":
         if shutil.which("docker"):
-            return run_cmd(["docker", "compose", "config", "--quiet"], ROOT_DIR)
+            return run_cmd(
+                ["docker", "compose", "-f", str(compose_file), "config", "--quiet"],
+                ROOT_DIR,
+            )
         return 0
     if stage == "security":
         if shutil.which("trivy"):
@@ -242,7 +250,10 @@ def run_docker(stage: str) -> int:
         return 0
     if stage == "build":
         if shutil.which("docker"):
-            return run_cmd(["docker", "compose", "build"], ROOT_DIR)
+            return run_cmd(
+                ["docker", "compose", "-f", str(compose_file), "build"],
+                ROOT_DIR,
+            )
         return 0
     return 0
 

@@ -4,7 +4,8 @@
 
 SHELL := /bin/bash
 PYTHON ?= python
-DOCKER_COMPOSE := docker compose -f docker-compose.yml
+DOCKER_DIR := infra/docker
+DOCKER_COMPOSE := docker compose -f $(DOCKER_DIR)/docker-compose.yml
 DOCKER_LOGS_TAIL ?= 200
 DOCKER_SERVICE ?=
 F ?= 1
