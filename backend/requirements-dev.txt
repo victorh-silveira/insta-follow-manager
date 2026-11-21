@@ -1,5 +1,6 @@
-# Pre-commit (Node.js, fora do pip): Node.js + npm para commitlint via npx
-# CI seguranca (binario, fora do pip): gitleaks
+# ---- FERRAMENTAS EXTERNAS (FORA DO PIP) ----
+# Pre-commit: Node.js + npm para commitlint via npx
+# Seguranca no CI: binario gitleaks
 
 # ---- PRE-COMMIT ----
 pre-commit>=3.5.0              # Gerenciador de ganchos (hooks) do Git para rodar validacoes antes de cada commit

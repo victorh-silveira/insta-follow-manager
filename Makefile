@@ -97,9 +97,7 @@ app-pre-commit:
 app-pre-commit-run:
 	pre-commit run --all-files
 
-# ------------------------------------------------------------------------------
-# Docker Targets
-# ------------------------------------------------------------------------------
+# ---- ALVOS DOCKER ----
 
 docker-up:
 	$(DOCKER_COMPOSE) up -d --build

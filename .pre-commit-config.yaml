@@ -1,4 +1,4 @@
-minimum_pre_commit_version: "3.5.0"
+﻿minimum_pre_commit_version: "3.5.0"
 fail_fast: true
 
 default_language_version:
@@ -15,7 +15,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- Python ---
+      # ---- PYTHON ----
       - id: python-lint
         name: Python | Lint
         entry: python scripts/operations/clean_workspace.py --area python --stage lint
@@ -56,7 +56,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- TypeScript ---
+      # ---- TYPESCRIPT ----
       - id: typescript-lint
         name: TypeScript | Lint
         entry: python scripts/operations/clean_workspace.py --area typescript --stage lint
@@ -97,7 +97,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- React ---
+      # ---- REACT ----
       - id: react-lint
         name: React | Lint
         entry: python scripts/operations/clean_workspace.py --area react --stage lint
@@ -138,7 +138,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- Next.js ---
+      # ---- NEXT.JS ----
       - id: nextjs-lint
         name: Next.js | Lint
         entry: python scripts/operations/clean_workspace.py --area nextjs --stage lint
@@ -179,7 +179,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- Tailwind CSS ---
+      # ---- TAILWIND CSS ----
       - id: tailwind-lint
         name: Tailwind CSS | Lint
         entry: python scripts/operations/clean_workspace.py --area tailwind --stage lint
@@ -220,7 +220,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- Docker ---
+      # ---- DOCKER ----
       - id: docker-lint
         name: Docker | Lint
         entry: python scripts/operations/clean_workspace.py --area docker --stage lint
@@ -261,7 +261,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- Shell ---
+      # ---- SHELL ----
       - id: shell-lint
         name: Shell | Lint
         entry: python scripts/operations/clean_workspace.py --area shell --stage lint
@@ -302,7 +302,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- JSON ---
+      # ---- JSON ----
       - id: json-lint
         name: JSON | Lint
         entry: python scripts/operations/clean_workspace.py --area json --stage lint
@@ -343,7 +343,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- YAML ---
+      # ---- YAML ----
       - id: yaml-lint
         name: YAML | Lint
         entry: python scripts/operations/clean_workspace.py --area yaml --stage lint
@@ -384,7 +384,7 @@ repos:
         always_run: true
         stages: [pre-commit]
 
-      # --- Limpeza & Commit-Msg ---
+      # ---- LIMPEZA E COMMIT-MSG ----
       - id: cleanup
         name: Limpeza (caches e artefatos locais)
         entry: python scripts/operations/clean_workspace.py --area all --stage clean
