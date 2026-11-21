@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.4.0...v1.5.0) (2026-11-21)
+
+### Funcionalidades
+
+* **all:** implementa dark mode, dashboard analitico e nova escala visual ([19d7dae](https://github.com/victorh-silveira/insta-follow-manager/commit/19d7dae641e41160956a6a5c1b42a61847b3fadb))
+
 ## [1.4.0](https://github.com/victorh-silveira/insta-follow-manager/compare/v1.3.0...v1.4.0) (2026-11-18)
 
 ### Funcionalidades
