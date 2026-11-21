@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1.7
 
-# --- Stage 1: Dependency Builder ---
 FROM python:3.13.9-slim-bookworm AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -16,7 +15,6 @@ ENV PATH="/opt/venv/bin:$PATH"
 COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir pip==26.3 && pip install --no-cache-dir -r requirements.txt
 
-# --- Stage 2: Minimal Non-Root Runtime ---
 FROM python:3.13.9-slim-bookworm AS runtime
 
 ARG APP_UID=10001
@@ -35,13 +33,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/opt/venv/bin:$PATH"
 
-# Install tini for proper PID 1 signal forwarding & zombie reaping
 # hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends tini \
     && rm -rf /var/lib/apt/lists/*
 
-# Create unprivileged user and group without login shell
 RUN groupadd --gid "${APP_GID}" appgroup \
     && useradd --uid "${APP_UID}" --gid "${APP_GID}" --create-home --shell /usr/sbin/nologin appuser
 
@@ -50,7 +46,6 @@ WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup /opt/venv /opt/venv
 COPY --chown=appuser:appgroup backend/src ./src
 
-# Persistent directory for SQLite / session volume
 RUN mkdir -p /app/data && chown -R appuser:appgroup /app/data
 
 USER appuser

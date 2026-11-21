@@ -99,7 +99,6 @@ services:
           cpus: "1.0"
           memory: 512M
 
-  # Visualizador de logs sob demanda: `make docker-debug-up`
   log-viewer:
     image: amir20/dozzle:v8.12.4
     container_name: insta-manager-logs

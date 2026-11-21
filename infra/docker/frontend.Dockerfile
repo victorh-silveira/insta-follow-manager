@@ -1,13 +1,11 @@
 # syntax=docker/dockerfile:1.7
 
-# --- Stage 1: Install Dependencies ---
 FROM node:22.14-alpine AS deps
 
 WORKDIR /app
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 
-# --- Stage 2: Build Standalone Bundle ---
 FROM node:22.14-alpine AS builder
 
 WORKDIR /app
@@ -20,7 +18,6 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} \
 
 RUN npm run build
 
-# --- Stage 3: Minimal Non-Root Runtime ---
 FROM node:22.14-alpine AS runner
 
 ARG APP_UID=10001

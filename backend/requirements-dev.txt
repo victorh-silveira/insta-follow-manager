@@ -1,19 +1,7 @@
-# Pre-commit (Node.js, fora do pip): Node.js + npm para commitlint via npx
-# CI seguranca (binario, fora do pip): gitleaks
-
-# ---- PRE-COMMIT ----
-pre-commit>=3.5.0              # Gerenciador de ganchos (hooks) do Git para rodar validacoes antes de cada commit
-
-# ---- LINT & QUALIDADE ----
-ruff>=0.8.0                    # Linter e formatador de codigo Python extremamente rapido
-
-# ---- SEGURANCA ----
-bandit>=1.8.0                  # Varre o codigo em busca de vulnerabilidades e falhas comuns de seguranca em Python
-
-# ---- TESTES & COBERTURA ----
-pytest==9.2.0                  # Framework principal para criacao, organizacao e execucao de testes automatizados
-pytest-cov==7.1.0              # Relatorio e gate obrigatorio de cobertura de testes (100% em backend/src)
-httpx2==2.16.2                 # Cliente HTTP exigido pelo TestClient do FastAPI/Starlette nos testes de integracao
-
-# ---- VALIDACAO YAML ----
-PyYAML>=6.0                    # Parser YAML utilizado pelo clean_workspace.py quando yamllint nao esta instalado
+pre-commit>=3.5.0
+ruff>=0.8.0
+bandit>=1.8.0
+pytest==9.2.0
+pytest-cov==7.1.0
+httpx2==2.16.2
+PyYAML>=6.0

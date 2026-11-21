@@ -1,4 +1,3 @@
-# Python
 backend/.venv/
 backend/.venv-wsl/
 __pycache__/
@@ -20,14 +19,12 @@ infra/docker/.env
 session.json
 backend/session.json
 
-# Node / Next.js
 frontend/node_modules/
 frontend/.next/
 frontend/out/
 frontend/.env*.local
 linters/node_modules/
 
-# IDE / OS
 .vscode/
 .idea/
 .DS_Store
