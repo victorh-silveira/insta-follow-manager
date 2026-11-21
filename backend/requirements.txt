@@ -1,10 +1,10 @@
 # ---- API WEB & SERVIDOR ----
-fastapi==0.163.1               # Framework web REST assincrono com validacao OpenAPI e injecao de dependencias
+fastapi==0.165.0               # Framework web REST assincrono com validacao OpenAPI e injecao de dependencias
 uvicorn[standard]==0.54.0      # Servidor ASGI de alta performance para execucao da API FastAPI
 
 # ---- VALIDACAO & CONFIGURACAO ----
-pydantic==2.14.3               # Validacao de schemas e contratos de entrada/saida na camada de apresentacao
+pydantic==2.14.4               # Validacao de schemas e contratos de entrada/saida na camada de apresentacao
 pydantic-settings==2.16.3      # Carregamento tipado de variaveis de ambiente (.env) para configuracao da app
 
 # ---- INTEGRACAO INSTAGRAM ----
-instagrapi==3.2.15             # Adapter para comunicacao com a API privada do Instagram (seguindo, seguidores e unfollow)
+instagrapi==3.2.19             # Adapter para comunicacao com a API privada do Instagram (seguindo, seguidores e unfollow)
