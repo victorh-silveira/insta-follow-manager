@@ -12,7 +12,7 @@ Ponto de entrada unico e canonico para agentes autonomos de IA e desenvolvedores
   - Comunicacao com servicos externos ocorre exclusivamente via Ports (`InstagramGateway`, `ProfileRepository`) e Adapters na camada `infrastructure/`.
 - **Frontend:** React + Next.js (App Router, TypeScript) + Tailwind CSS com build `standalone`.
 - **Integridade de Codigo:** Funcoes pequenas, responsabilidade unica, zero duplicacao de logica e docstrings claras.
-- **Proibicao de Comentarios em Arquivos:** E **100% proibido** escrever comentarios (`#`, `//`, `/* */`) em qualquer arquivo do projeto (codigo-fonte, testes, scripts, YAML, Dockerfiles, Makefiles, `.env.example`, `.gitignore`, `.gitattributes`, `requirements*.txt`). O codigo e as configuracoes devem ser autoexplicativos por nomes claros e docstrings concisas; apenas diretivas tecnicas obrigatorias de ferramentas (`# type: ignore[...]`, `# syntax=...`, `# hadolint ignore=...`, `eslint-disable-next-line`, shebangs `#!/...`) sao toleradas quando inevitaveis.
+- **Proibicao de Comentarios em `src` e `infra`:** E **100% proibido** escrever comentarios (`#`, `//`, `/* */`) em arquivos de codigo-fonte, testes, scripts e infraestrutura (`backend/src/`, `backend/tests/`, `frontend/src/`, `scripts/`, `infra/`). O codigo e a infraestrutura devem ser autoexplicativos por nomes claros e docstrings concisas; apenas diretivas tecnicas obrigatorias de ferramentas (`# type: ignore[...]`, `# syntax=...`, `# hadolint ignore=...`, `eslint-disable-next-line`, shebangs `#!/...`) sao toleradas quando inevitaveis.
 - **Contrato de Commits:** Seguir rigorosamente Conventional Commits em **PT-BR** validados por `linters/commitlint.config.mjs`.
 
 ---
