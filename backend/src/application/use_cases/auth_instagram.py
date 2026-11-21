@@ -16,6 +16,12 @@ def _to_dto(account: AuthAccount, gateway_mode: str) -> AuthStatusDTO:
         username=account.username,
         full_name=account.full_name,
         profile_pic_url=account.profile_pic_url,
+        biography=account.biography,
+        media_count=account.media_count,
+        follower_count=account.follower_count,
+        following_count=account.following_count,
+        is_private=account.is_private,
+        is_verified=account.is_verified,
     )
 
 

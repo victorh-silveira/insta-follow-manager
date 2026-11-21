@@ -4,20 +4,24 @@ from dataclasses import asdict
 
 from fastapi import APIRouter, Depends, Query
 
+from src.application.use_cases.get_relationship_analytics import GetRelationshipAnalyticsUseCase
 from src.application.use_cases.list_profiles_by_bucket import ListProfilesByBucketUseCase
 from src.application.use_cases.remove_follower import RemoveFollowerUseCase
 from src.application.use_cases.sync_relationships import SyncRelationshipsUseCase
 from src.application.use_cases.unfollow_profile import UnfollowProfileUseCase
 from src.domain.repositories.profile_repository import RelationshipListType
 from src.presentation.api.dependencies import (
+    get_analytics_use_case,
     get_list_profiles_use_case,
     get_remove_follower_use_case,
     get_sync_use_case,
     get_unfollow_use_case,
 )
 from src.presentation.api.schemas import (
+    BucketCountResponse,
     ListProfilesResponse,
     ProfileResponse,
+    RelationshipAnalyticsResponse,
     RemoveFollowerResponse,
     SyncResponse,
     UnfollowResponse,
@@ -48,6 +52,28 @@ def list_relationships(
         profiles=[ProfileResponse(**asdict(p)) for p in result.profiles],
         bucket_counts=result.bucket_counts,
         total_in_list=result.total_in_list,
+    )
+
+
+@router.get("/analytics", response_model=RelationshipAnalyticsResponse)
+def get_relationship_analytics(
+    use_case: GetRelationshipAnalyticsUseCase = Depends(get_analytics_use_case),
+) -> RelationshipAnalyticsResponse:
+    """Return aggregated relationship analytics from local SQLite cache."""
+    result = use_case.execute()
+    return RelationshipAnalyticsResponse(
+        total_cached=result.total_cached,
+        following_count=result.following_count,
+        followers_count=result.followers_count,
+        mutual_count=result.mutual_count,
+        non_followers_count=result.non_followers_count,
+        not_following_back_count=result.not_following_back_count,
+        follow_back_rate=result.follow_back_rate,
+        follower_following_ratio=result.follower_following_ratio,
+        verified_following_count=result.verified_following_count,
+        verified_followers_count=result.verified_followers_count,
+        nameless_profiles_count=result.nameless_profiles_count,
+        top_buckets=[BucketCountResponse(**asdict(item)) for item in result.top_buckets],
     )
 
 

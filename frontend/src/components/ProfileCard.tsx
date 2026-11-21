@@ -37,7 +37,7 @@ export function ProfileCard({
   const isFollowerMode =
     activeTab === "followers" || activeTab === "not_following_back";
   const canAct = isFollowerMode ? profile.is_follower : profile.is_following;
-  const actionLabel = isFollowerMode ? "Remover seguidor" : "Remover seguindo";
+  const actionLabel = isFollowerMode ? "Remover seguidor" : "Deixar de seguir";
 
   const handleConfirmAction = () => {
     setConfirming(false);
@@ -49,16 +49,16 @@ export function ProfileCard({
   };
 
   return (
-    <article className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/95 p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-fuchsia-200 hover:shadow-md hover:shadow-fuchsia-500/10">
-      <div className="flex min-w-0 items-center gap-3.5">
+    <article className="group flex flex-col justify-between gap-4 rounded-3xl border border-slate-200/90 bg-white/95 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-fuchsia-300 hover:shadow-md hover:shadow-fuchsia-500/10 dark:border-slate-800 dark:bg-slate-900/90 dark:hover:border-fuchsia-500/60 sm:flex-row sm:items-center">
+      <div className="flex min-w-0 items-center gap-4">
         <div
-          className={`rounded-full p-0.5 ${
+          className={`shrink-0 rounded-full p-0.5 ${
             profile.is_follower
               ? "bg-gradient-to-tr from-emerald-400 via-teal-400 to-sky-400"
               : "bg-gradient-to-tr from-fuchsia-500 via-rose-500 to-amber-400"
           }`}
         >
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-gradient-to-br from-fuchsia-500 via-rose-500 to-amber-400 text-sm font-bold text-white">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-gradient-to-br from-fuchsia-500 via-rose-500 to-amber-400 text-base font-bold text-white dark:border-slate-900">
             {showAvatarImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -74,14 +74,14 @@ export function ProfileCard({
         </div>
 
         <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <h3 className="truncate text-sm font-bold text-slate-900">
+          <div className="flex items-center gap-2">
+            <h3 className="truncate text-base font-bold text-slate-900 dark:text-white">
               {displayName}
             </h3>
             {profile.is_verified && (
               <span
                 title="Conta verificada"
-                className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sky-500 text-[10px] font-bold text-white shadow-sm shadow-sky-500/30"
+                className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-500 text-xs font-bold text-white shadow-sm shadow-sky-500/30"
               >
                 ✓
               </span>
@@ -92,22 +92,23 @@ export function ProfileCard({
             href={`https://www.instagram.com/${encodeURIComponent(profile.username)}/`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 truncate text-xs font-medium text-slate-500 transition hover:text-fuchsia-600"
+            className="inline-flex items-center gap-1 truncate text-sm font-medium text-slate-500 transition hover:text-fuchsia-600 dark:text-slate-400 dark:hover:text-fuchsia-400"
           >
             @{profile.username}
           </a>
 
-          <div className="mt-1.5 flex flex-wrap gap-1.5">
-            <span className="rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-semibold text-violet-700 ring-1 ring-violet-200/70">
-              {profile.bucket === "SPECIAL" ? "Especiais" : profile.bucket}
-            </span>
-            {profile.is_follower ? (
-              <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 ring-1 ring-emerald-200/70">
+          <div className="mt-2 flex flex-wrap gap-2">
+            {profile.is_following && profile.is_follower ? (
+              <span className="rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300 dark:ring-emerald-800">
+                Mútuo
+              </span>
+            ) : profile.is_follower ? (
+              <span className="rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300 dark:ring-emerald-800">
                 Segue você
               </span>
             ) : (
-              <span className="rounded-md bg-rose-50 px-2 py-0.5 text-[10px] font-semibold text-rose-700 ring-1 ring-rose-200/70">
-                Não segue você
+              <span className="rounded-full bg-rose-50 px-3 py-0.5 text-xs font-semibold text-rose-700 ring-1 ring-rose-200 dark:bg-rose-950/70 dark:text-rose-300 dark:ring-rose-800">
+                Não te segue
               </span>
             )}
           </div>
@@ -115,42 +116,34 @@ export function ProfileCard({
       </div>
 
       {canAct && (
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex shrink-0 items-center justify-end gap-2">
           {confirming ? (
             <>
               <button
                 type="button"
-                onClick={handleConfirmAction}
                 disabled={isProcessing}
-                className={`rounded-xl px-3 py-2 text-xs font-bold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50 ${
-                  isFollowerMode
-                    ? "bg-amber-600 shadow-amber-500/25 hover:bg-amber-700"
-                    : "bg-rose-600 shadow-rose-500/25 hover:bg-rose-700"
-                }`}
+                onClick={handleConfirmAction}
+                className="rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-700 disabled:opacity-50"
               >
-                {isProcessing ? "Enviando..." : "Confirmar"}
+                {isProcessing ? "Processando..." : "Confirmar"}
               </button>
               <button
                 type="button"
-                onClick={() => setConfirming(false)}
                 disabled={isProcessing}
-                className="rounded-xl border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50"
+                onClick={() => setConfirming(false)}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
               >
-                Não
+                Cancelar
               </button>
             </>
           ) : (
             <button
               type="button"
-              onClick={() => setConfirming(true)}
               disabled={isProcessing}
-              className={`rounded-xl border px-3 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
-                isFollowerMode
-                  ? "border-amber-200 bg-amber-50/80 text-amber-800 hover:border-amber-600 hover:bg-amber-600 hover:text-white"
-                  : "border-rose-200 bg-rose-50/80 text-rose-700 hover:border-rose-600 hover:bg-rose-600 hover:text-white"
-              }`}
+              onClick={() => setConfirming(true)}
+              className="rounded-xl border border-rose-200 bg-rose-50/70 px-4 py-2.5 text-sm font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100 disabled:opacity-50 dark:border-rose-900 dark:bg-rose-950/60 dark:text-rose-300 dark:hover:border-rose-700 dark:hover:bg-rose-950"
             >
-              {isProcessing ? "Enviando..." : actionLabel}
+              {actionLabel}
             </button>
           )}
         </div>

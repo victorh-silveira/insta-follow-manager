@@ -68,6 +68,12 @@ class MockInstagramGateway(InstagramGateway):
             is_authenticated=True,
             username=self._username,
             full_name="Conta Demo",
+            biography="Gerenciando conexoes e triagem alfabetica no Insta Follow Manager.",
+            media_count=42,
+            follower_count=len(self._followers),
+            following_count=len(self._following),
+            is_private=False,
+            is_verified=True,
         )
 
     def login(

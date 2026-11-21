@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { AlphabetBar } from "@/components/AlphabetBar";
+import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { InstagramLoginCard } from "@/components/InstagramLoginCard";
 import { ProfileCard } from "@/components/ProfileCard";
 import { RelationshipTabs } from "@/components/RelationshipTabs";
@@ -12,6 +13,7 @@ import {
   AuthStatus,
   LoginPayload,
   Profile,
+  RelationshipAnalytics,
   RelationshipListType,
   SyncResponse,
 } from "@/types/relationship";
@@ -23,12 +25,14 @@ export default function HomePage() {
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
   const [activeTab, setActiveTab] = useState<RelationshipListType>("following");
-  const [selectedBucket, setSelectedBucket] = useState<string>("A");
+  const [selectedBucket, setSelectedBucket] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [bucketCounts, setBucketCounts] = useState<Record<string, number>>({});
   const [totalInList, setTotalInList] = useState<number>(0);
+  const [analytics, setAnalytics] = useState<RelationshipAnalytics | null>(null);
+  const [isLoadingAnalytics, setIsLoadingAnalytics] = useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
@@ -38,6 +42,18 @@ export default function HomePage() {
     type: "error" | "success";
     message: string;
   } | null>(null);
+
+  const loadAnalytics = useCallback(async () => {
+    setIsLoadingAnalytics(true);
+    try {
+      const data = await relationshipApi.getAnalytics();
+      setAnalytics(data);
+    } catch {
+      setAnalytics(null);
+    } finally {
+      setIsLoadingAnalytics(false);
+    }
+  }, []);
 
   const loadProfiles = useCallback(async () => {
     setIsLoading(true);
@@ -82,6 +98,22 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!authStatus?.authenticated) return;
+    let active = true;
+    relationshipApi
+      .getAnalytics()
+      .then((data) => {
+        if (active) setAnalytics(data);
+      })
+      .catch(() => {
+        if (active) setAnalytics(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [authStatus?.authenticated]);
+
+  useEffect(() => {
+    if (!authStatus?.authenticated) return;
     const timer = setTimeout(() => {
       void loadProfiles();
     }, 150);
@@ -99,7 +131,7 @@ export default function HomePage() {
         type: "success",
         message: `Sincronizado! ${result.following_count} seguindo e ${result.followers_count} seguidores carregados.`,
       });
-      await loadProfiles();
+      await Promise.all([loadProfiles(), loadAnalytics()]);
     } catch (err) {
       setFeedback({
         type: "error",
@@ -130,6 +162,7 @@ export default function HomePage() {
     const status = await relationshipApi.logout();
     setAuthStatus(status);
     setProfiles([]);
+    setAnalytics(null);
     setLastSync(null);
     setFeedback({
       type: "success",
@@ -149,7 +182,7 @@ export default function HomePage() {
           ? `Deixou de seguir ${nameLabel} e removeu dos seguidores.`
           : `Deixou de seguir ${nameLabel}.`,
       });
-      await loadProfiles();
+      await Promise.all([loadProfiles(), loadAnalytics()]);
     } catch (err) {
       setFeedback({
         type: "error",
@@ -170,7 +203,7 @@ export default function HomePage() {
         type: "success",
         message: `Seguidor removido: ${result.full_name || result.username} (@${result.username}).`,
       });
-      await loadProfiles();
+      await Promise.all([loadProfiles(), loadAnalytics()]);
     } catch (err) {
       setFeedback({
         type: "error",
@@ -188,17 +221,17 @@ export default function HomePage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-rose-50/80 via-slate-50 to-indigo-50/80 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-rose-50/80 via-slate-50 to-indigo-50/80 px-4 py-8 text-slate-900 dark:from-slate-950 dark:via-slate-950 dark:to-indigo-950/60 dark:text-slate-100 sm:px-8 lg:px-10">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-fuchsia-200/35 blur-3xl"
+        className="pointer-events-none absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-fuchsia-200/35 blur-3xl dark:bg-fuchsia-900/20"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-16 right-1/4 h-72 w-72 rounded-full bg-amber-200/35 blur-3xl"
+        className="pointer-events-none absolute -top-16 right-1/4 h-80 w-80 rounded-full bg-amber-200/35 blur-3xl dark:bg-indigo-900/20"
       />
 
-      <div className="relative mx-auto flex max-w-6xl flex-col gap-6">
+      <div className="relative mx-auto flex max-w-[1440px] flex-col gap-7">
         <SyncHeader
           gatewayMode={gatewayMode}
           authStatus={authStatus}
@@ -206,21 +239,20 @@ export default function HomePage() {
           lastSync={lastSync}
           onSync={handleSync}
           onLogout={handleLogout}
-          onSelectTab={setActiveTab}
         />
 
         {feedback && (
           <div
             role="status"
-            className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-sm font-medium shadow-sm ${
+            className={`flex items-center justify-between gap-4 rounded-2xl border px-5 py-4 text-base font-medium shadow-sm ${
               feedback.type === "error"
-                ? "border-rose-200 bg-rose-50/95 text-rose-800"
-                : "border-emerald-200 bg-emerald-50/95 text-emerald-800"
+                ? "border-rose-200 bg-rose-50/95 text-rose-800 dark:border-rose-900 dark:bg-rose-950/70 dark:text-rose-200"
+                : "border-emerald-200 bg-emerald-50/95 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/70 dark:text-emerald-200"
             }`}
           >
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
               <span
-                className={`h-2 w-2 shrink-0 rounded-full ${
+                className={`h-2.5 w-2.5 shrink-0 rounded-full ${
                   feedback.type === "error" ? "bg-rose-500" : "bg-emerald-500"
                 }`}
               />
@@ -230,10 +262,10 @@ export default function HomePage() {
               type="button"
               onClick={() => setFeedback(null)}
               aria-label="Fechar aviso"
-              className="rounded-lg p-1 opacity-70 transition hover:bg-black/5 hover:opacity-100"
+              className="rounded-lg p-1.5 opacity-70 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/10"
             >
               <svg
-                className="h-4 w-4"
+                className="h-5 w-5"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -248,7 +280,7 @@ export default function HomePage() {
         )}
 
         {isCheckingAuth ? (
-          <div className="h-48 animate-pulse rounded-3xl border border-rose-100 bg-white/80" />
+          <div className="h-56 animate-pulse rounded-3xl border border-rose-100 bg-white/80 dark:border-slate-800 dark:bg-slate-900/70" />
         ) : !authStatus?.authenticated ? (
           <InstagramLoginCard
             isLoggingIn={isLoggingIn}
@@ -256,6 +288,14 @@ export default function HomePage() {
           />
         ) : (
           <>
+            <AnalyticsDashboard
+              analytics={analytics}
+              authStatus={authStatus}
+              isLoading={isLoadingAnalytics}
+              onSelectTab={setActiveTab}
+              onSelectBucket={setSelectedBucket}
+            />
+
             <RelationshipTabs
               activeTab={activeTab}
               searchQuery={searchQuery}
@@ -272,19 +312,19 @@ export default function HomePage() {
             />
 
             {isLoading ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, idx) => (
                   <div
                     key={idx}
-                    className="h-24 animate-pulse rounded-2xl border border-rose-100/70 bg-white/80"
+                    className="h-28 animate-pulse rounded-3xl border border-rose-100/70 bg-white/80 dark:border-slate-800 dark:bg-slate-900/70"
                   />
                 ))}
               </div>
             ) : profiles.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-fuchsia-200 bg-white/85 p-12 text-center shadow-sm">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-fuchsia-50 text-fuchsia-600">
+              <div className="flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-fuchsia-200 bg-white/90 p-14 text-center shadow-sm dark:border-slate-700 dark:bg-slate-900/80">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-fuchsia-50 text-fuchsia-600 dark:bg-fuchsia-950 dark:text-fuchsia-300">
                   <svg
-                    className="h-6 w-6"
+                    className="h-7 w-7"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -295,7 +335,7 @@ export default function HomePage() {
                     <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                 </div>
-                <p className="text-sm font-semibold text-slate-700">
+                <p className="text-base font-semibold text-slate-700 dark:text-slate-200">
                   {totalInList === 0
                     ? "Nenhum perfil em cache nesta lista. Clique em \"Sincronizar Instagram\" para carregar."
                     : "Nenhum perfil encontrado para este filtro alfabético ou busca."}
@@ -305,7 +345,7 @@ export default function HomePage() {
                     type="button"
                     onClick={handleSync}
                     disabled={isSyncing}
-                    className="mt-1 rounded-xl bg-gradient-to-r from-fuchsia-600 via-rose-500 to-amber-500 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:brightness-105"
+                    className="mt-1 rounded-xl bg-gradient-to-r from-fuchsia-600 via-rose-500 to-amber-500 px-5 py-3 text-base font-semibold text-white shadow-sm transition hover:brightness-105"
                   >
                     Sincronizar agora
                   </button>
@@ -313,18 +353,18 @@ export default function HomePage() {
                   <button
                     type="button"
                     onClick={handleClearFilters}
-                    className="mt-1 rounded-xl border border-fuchsia-200 bg-fuchsia-50 px-4 py-2 text-xs font-semibold text-fuchsia-700 transition hover:bg-fuchsia-100"
+                    className="mt-1 rounded-xl border border-fuchsia-200 bg-fuchsia-50 px-5 py-3 text-base font-semibold text-fuchsia-700 transition hover:bg-fuchsia-100 dark:border-fuchsia-800 dark:bg-fuchsia-950 dark:text-fuchsia-300 dark:hover:bg-fuchsia-900"
                   >
                     Limpar filtros
                   </button>
                 )}
               </div>
             ) : (
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between px-1 text-xs font-medium text-slate-500">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between px-1 text-base font-medium text-slate-600 dark:text-slate-400">
                   <span>
                     Exibindo{" "}
-                    <strong className="text-slate-800">{profiles.length}</strong>{" "}
+                    <strong className="text-slate-900 dark:text-white">{profiles.length}</strong>{" "}
                     {profiles.length === 1 ? "perfil" : "perfis"}
                     {selectedBucket !== "ALL"
                       ? ` no grupo "${selectedBucket === "SPECIAL" ? "Especiais" : selectedBucket}"`
@@ -333,7 +373,7 @@ export default function HomePage() {
                 </div>
                 <section
                   aria-label="Lista de perfis"
-                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                  className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
                 >
                   {profiles.map((profile) => (
                     <ProfileCard

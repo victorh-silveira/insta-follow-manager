@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #fff9fb;
   --foreground: #0f172a;
+}
+
+.dark {
+  --background: #090d16;
+  --foreground: #f8fafc;
 }
 
 @theme inline {
@@ -10,6 +17,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -21,4 +32,9 @@ body {
 ::selection {
   background-color: #fae8ff;
   color: #701a75;
+}
+
+.dark ::selection {
+  background-color: #701a75;
+  color: #fdf4ff;
 }

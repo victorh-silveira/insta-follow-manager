@@ -3,6 +3,7 @@ import {
   HealthResponse,
   ListProfilesResponse,
   LoginPayload,
+  RelationshipAnalytics,
   RelationshipListType,
   RemoveFollowerResponse,
   SyncResponse,
@@ -96,6 +97,10 @@ export const relationshipApi = {
     return request<SyncResponse>("/api/relationships/sync", {
       method: "POST",
     });
+  },
+
+  getAnalytics(): Promise<RelationshipAnalytics> {
+    return request<RelationshipAnalytics>("/api/relationships/analytics");
   },
 
   list(params: {

@@ -64,14 +64,7 @@ class InstagrapiGateway(InstagramGateway):
                 self._client.login_by_sessionid(session_id)
             info = self._client.account_info()
             self._authenticated = True
-            self._account = AuthAccount(
-                is_authenticated=True,
-                username=getattr(info, "username", None) or self._username or None,
-                full_name=getattr(info, "full_name", None) or "",
-                profile_pic_url=str(info.profile_pic_url)
-                if getattr(info, "profile_pic_url", None)
-                else None,
-            )
+            self._account = self._build_auth_account(info, fallback_username=self._username or None)
             emit_event(
                 logger,
                 logging.INFO,
@@ -137,14 +130,7 @@ class InstagrapiGateway(InstagramGateway):
             self._username = resolved_username
             self._password = password
             self._authenticated = True
-            self._account = AuthAccount(
-                is_authenticated=True,
-                username=resolved_username,
-                full_name=getattr(info, "full_name", None) or "",
-                profile_pic_url=str(info.profile_pic_url)
-                if getattr(info, "profile_pic_url", None)
-                else None,
-            )
+            self._account = self._build_auth_account(info, fallback_username=resolved_username)
             emit_event(
                 logger,
                 logging.INFO,
@@ -197,6 +183,47 @@ class InstagrapiGateway(InstagramGateway):
             raise RateLimitError(f"Instagram rate limit hit during login: {exc}") from exc
         except Exception as exc:
             raise GatewayError(f"Failed to authenticate with Instagram: {exc}") from exc
+
+    def _build_auth_account(
+        self,
+        info: Any,
+        fallback_username: str | None = None,
+    ) -> AuthAccount:
+        biography = getattr(info, "biography", None) or None
+        media_count: int | None = None
+        follower_count: int | None = None
+        following_count: int | None = None
+        is_private = getattr(info, "is_private", None)
+        is_verified = bool(getattr(info, "is_verified", False))
+
+        user_id = getattr(self._client, "user_id", None)
+        if user_id and hasattr(self._client, "user_info"):
+            try:
+                user_detail = self._client.user_info(user_id)
+                biography = getattr(user_detail, "biography", None) or biography
+                media_count = getattr(user_detail, "media_count", None)
+                follower_count = getattr(user_detail, "follower_count", None)
+                following_count = getattr(user_detail, "following_count", None)
+                if getattr(user_detail, "is_private", None) is not None:
+                    is_private = getattr(user_detail, "is_private", None)
+                is_verified = bool(getattr(user_detail, "is_verified", is_verified))
+            except Exception:
+                pass
+
+        return AuthAccount(
+            is_authenticated=True,
+            username=getattr(info, "username", None) or fallback_username,
+            full_name=getattr(info, "full_name", None) or "",
+            profile_pic_url=str(info.profile_pic_url)
+            if getattr(info, "profile_pic_url", None)
+            else None,
+            biography=biography,
+            media_count=media_count,
+            follower_count=follower_count,
+            following_count=following_count,
+            is_private=is_private,
+            is_verified=is_verified,
+        )
 
     def _persist_device_settings(self) -> None:
         self._session_path.parent.mkdir(parents=True, exist_ok=True)

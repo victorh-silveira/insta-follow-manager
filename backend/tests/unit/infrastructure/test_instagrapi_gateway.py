@@ -300,3 +300,38 @@ def test_instagrapi_gateway_challenge_code_handler_and_session_id(
     session_account = gateway.login("", "", session_id="sid-cookie")
     assert session_account.is_authenticated is True
     assert fake_client.sessionid == "sid-cookie"
+
+
+def test_instagrapi_gateway_enriches_account_with_user_info_and_fallback(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    fake_client = _FakeClient()
+    fake_client.user_id = 999
+    fake_client.user_info = lambda _uid: SimpleNamespace(
+        biography="Bio teste",
+        media_count=12,
+        follower_count=340,
+        following_count=120,
+        is_private=True,
+        is_verified=True,
+    )
+    monkeypatch.setattr(gw_module, "Client", lambda: fake_client)
+
+    gateway = InstagrapiGateway(session_path=str(tmp_path / "s_detail.json"))
+    account = gateway.login("user", "pass")
+    assert account.biography == "Bio teste"
+    assert account.media_count == 12
+    assert account.follower_count == 340
+    assert account.following_count == 120
+    assert account.is_private is True
+    assert account.is_verified is True
+
+    def _fail_user_info(_uid: int) -> object:
+        raise RuntimeError("user_info unavailable")
+
+    fake_client.user_info = _fail_user_info
+    resumed_gateway = InstagrapiGateway(session_path=str(tmp_path / "s_detail.json"))
+    fallback_account = resumed_gateway.get_auth_status()
+    assert fallback_account.is_authenticated is True
+    assert fallback_account.media_count is None

@@ -19,30 +19,28 @@ const TABS: {
   {
     id: "following",
     label: "Seguindo",
-    activeClass:
-      "bg-indigo-600 text-white shadow-sm shadow-indigo-500/25",
-    badgeClass: "bg-white/20 text-white",
+    activeClass: "bg-indigo-600 text-white shadow-sm shadow-indigo-500/25",
+    badgeClass: "bg-white/25 text-white",
   },
   {
     id: "followers",
     label: "Seguidores",
-    activeClass:
-      "bg-emerald-600 text-white shadow-sm shadow-emerald-500/25",
-    badgeClass: "bg-white/20 text-white",
+    activeClass: "bg-emerald-600 text-white shadow-sm shadow-emerald-500/25",
+    badgeClass: "bg-white/25 text-white",
   },
   {
     id: "non_followers",
     label: "Não me seguem de volta",
     activeClass:
       "bg-gradient-to-r from-rose-600 to-pink-600 text-white shadow-sm shadow-rose-500/25",
-    badgeClass: "bg-white/20 text-white",
+    badgeClass: "bg-white/25 text-white",
   },
   {
     id: "not_following_back",
     label: "Não sigo de volta",
     activeClass:
       "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/25",
-    badgeClass: "bg-white/20 text-white",
+    badgeClass: "bg-white/25 text-white",
   },
 ];
 
@@ -54,8 +52,8 @@ export function RelationshipTabs({
   onSearchChange,
 }: RelationshipTabsProps) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="inline-flex flex-wrap gap-1.5 rounded-2xl border border-slate-200/80 bg-white/80 p-1.5 shadow-sm backdrop-blur-sm">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="inline-flex flex-wrap gap-2 rounded-2xl border border-slate-200/90 bg-white/90 p-2 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -63,16 +61,16 @@ export function RelationshipTabs({
               key={tab.id}
               type="button"
               onClick={() => onTabChange(tab.id)}
-              className={`inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold transition ${
+              className={`inline-flex items-center rounded-xl px-5 py-3 text-base font-semibold transition ${
                 isActive
                   ? tab.activeClass
-                  : "text-slate-600 hover:bg-slate-100/80 hover:text-slate-900"
+                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
               }`}
             >
               {tab.label}
               {isActive && (
                 <span
-                  className={`ml-2 rounded-full px-2 py-0.5 text-xs font-bold ${tab.badgeClass}`}
+                  className={`ml-2.5 rounded-full px-2.5 py-0.5 text-sm font-bold ${tab.badgeClass}`}
                 >
                   {totalInList}
                 </span>
@@ -82,9 +80,9 @@ export function RelationshipTabs({
         })}
       </div>
 
-      <div className="relative w-full sm:w-80">
+      <div className="relative w-full lg:w-96">
         <svg
-          className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400 dark:text-slate-500"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -98,30 +96,10 @@ export function RelationshipTabs({
           type="search"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Buscar por nome ou @user..."
-          aria-label="Buscar perfil"
-          className="w-full rounded-xl border border-slate-200 bg-white/90 py-2.5 pl-10 pr-9 text-sm text-slate-900 placeholder-slate-400 shadow-sm outline-none transition focus:border-fuchsia-400 focus:bg-white focus:ring-2 focus:ring-fuchsia-100"
+          placeholder="Buscar por nome ou @usuario..."
+          aria-label="Buscar por nome ou @usuario"
+          className="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-12 pr-4 text-base text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-fuchsia-400 focus:ring-2 focus:ring-fuchsia-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-fuchsia-500"
         />
-        {searchQuery && (
-          <button
-            type="button"
-            onClick={() => onSearchChange("")}
-            aria-label="Limpar busca"
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-          >
-            <svg
-              className="h-3.5 w-3.5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        )}
       </div>
     </div>
   );

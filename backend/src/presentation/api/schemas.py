@@ -71,3 +71,33 @@ class AuthStatusResponse(BaseModel):
     username: str | None = None
     full_name: str | None = None
     profile_pic_url: str | None = None
+    biography: str | None = None
+    media_count: int | None = None
+    follower_count: int | None = None
+    following_count: int | None = None
+    is_private: bool | None = None
+    is_verified: bool = False
+
+
+class BucketCountResponse(BaseModel):
+    """Serialized bucket distribution entry."""
+
+    bucket: str
+    count: int
+
+
+class RelationshipAnalyticsResponse(BaseModel):
+    """Aggregated analytics payload for the home dashboard."""
+
+    total_cached: int
+    following_count: int
+    followers_count: int
+    mutual_count: int
+    non_followers_count: int
+    not_following_back_count: int
+    follow_back_rate: float
+    follower_following_ratio: float
+    verified_following_count: int
+    verified_followers_count: int
+    nameless_profiles_count: int
+    top_buckets: list[BucketCountResponse]

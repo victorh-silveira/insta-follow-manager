@@ -62,6 +62,32 @@ export interface AuthStatus {
   username: string | null;
   full_name: string | null;
   profile_pic_url: string | null;
+  biography?: string | null;
+  media_count?: number | null;
+  follower_count?: number | null;
+  following_count?: number | null;
+  is_private?: boolean | null;
+  is_verified?: boolean;
+}
+
+export interface BucketCount {
+  bucket: string;
+  count: number;
+}
+
+export interface RelationshipAnalytics {
+  total_cached: number;
+  following_count: number;
+  followers_count: number;
+  mutual_count: number;
+  non_followers_count: number;
+  not_following_back_count: number;
+  follow_back_rate: number;
+  follower_following_ratio: number;
+  verified_following_count: number;
+  verified_followers_count: number;
+  nameless_profiles_count: number;
+  top_buckets: BucketCount[];
 }
 
 export interface LoginPayload {

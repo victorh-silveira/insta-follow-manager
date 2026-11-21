@@ -58,17 +58,17 @@ export function InstagramLoginCard({
   return (
     <section
       aria-label="Autenticacao no Instagram"
-      className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-rose-100/80 bg-white/95 p-6 shadow-xl shadow-rose-500/10 backdrop-blur-md sm:p-8"
+      className="relative mx-auto w-full max-w-xl overflow-hidden rounded-3xl border border-rose-200/80 bg-white/95 p-7 shadow-xl shadow-rose-500/10 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/30 sm:p-9"
     >
       <div
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-fuchsia-600 via-rose-500 to-amber-500"
       />
 
-      <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-100 to-rose-100 text-fuchsia-600">
+      <div className="flex items-center gap-4">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-100 to-rose-100 text-fuchsia-600 dark:from-fuchsia-950 dark:to-rose-950 dark:text-fuchsia-300">
           <svg
-            className="h-5 w-5"
+            className="h-7 w-7"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -82,26 +82,26 @@ export function InstagramLoginCard({
           </svg>
         </div>
         <div>
-          <h2 className="text-lg font-bold text-slate-900">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
             Conectar conta do Instagram
           </h2>
-          <p className="text-xs text-slate-500">
-            Sessão local segura para sincronizar seguidores
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
+            Sessão local segura para carregar seu dashboard e seguidores
           </p>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-1.5 rounded-xl bg-slate-100 p-1">
+      <div className="mt-6 grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 p-1.5 dark:bg-slate-800">
         <button
           type="button"
           onClick={() => {
             setAuthMode("credentials");
             setErrorMessage(null);
           }}
-          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+          className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
             authMode === "credentials"
-              ? "bg-white text-slate-900 shadow-sm"
-              : "text-slate-600 hover:text-slate-900"
+              ? "bg-white text-slate-900 shadow-sm dark:bg-slate-900 dark:text-white"
+              : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
           }`}
         >
           Usuário e senha
@@ -112,26 +112,26 @@ export function InstagramLoginCard({
             setAuthMode("session_id");
             setErrorMessage(null);
           }}
-          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+          className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
             authMode === "session_id"
-              ? "bg-white text-fuchsia-700 shadow-sm"
-              : "text-slate-600 hover:text-slate-900"
+              ? "bg-white text-fuchsia-700 shadow-sm dark:bg-slate-900 dark:text-fuchsia-300"
+              : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
           }`}
         >
           Session ID (Cookie)
         </button>
       </div>
 
-      <p className="mt-3 rounded-xl border border-indigo-100 bg-indigo-50/60 px-3.5 py-2.5 text-xs leading-relaxed text-indigo-900">
+      <p className="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/70 px-4 py-3 text-sm leading-relaxed text-indigo-900 dark:border-indigo-900/60 dark:bg-indigo-950/40 dark:text-indigo-200">
         {authMode === "session_id" ? (
           <>
-            No navegador logado no Instagram, abra o DevTools (<code className="font-semibold text-indigo-700">F12</code> → Application → Cookies) e copie o valor de{" "}
-            <code className="font-semibold text-indigo-700">sessionid</code>. Evita bloqueios de Bloks/Checkpoint.
+            No navegador logado no Instagram, abra o DevTools (<code className="font-semibold text-indigo-700 dark:text-indigo-300">F12</code> → Application → Cookies) e copie o valor de{" "}
+            <code className="font-semibold text-indigo-700 dark:text-indigo-300">sessionid</code>. Evita bloqueios de Bloks/Checkpoint.
           </>
         ) : (
           <>
             A senha é usada apenas no login para gerar a sessão local (
-            <code className="font-semibold text-indigo-700">session.json</code>) e
+            <code className="font-semibold text-indigo-700 dark:text-indigo-300">session.json</code>) e
             nunca é armazenada em banco ou logs.
           </>
         )}
@@ -140,10 +140,10 @@ export function InstagramLoginCard({
       {errorMessage && (
         <div
           role="alert"
-          className="mt-4 flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-xs font-medium text-rose-800"
+          className="mt-4 flex items-start gap-2.5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800 dark:border-rose-900 dark:bg-rose-950/60 dark:text-rose-200"
         >
           <svg
-            className="mt-0.5 h-4 w-4 shrink-0 text-rose-600"
+            className="mt-0.5 h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -158,12 +158,12 @@ export function InstagramLoginCard({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-5 flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-5">
         {authMode === "session_id" ? (
           <div>
             <label
               htmlFor="ig-session-id"
-              className="block text-xs font-semibold text-slate-700"
+              className="block text-sm font-semibold text-slate-700 dark:text-slate-200"
             >
               Cookie sessionid
             </label>
@@ -174,7 +174,7 @@ export function InstagramLoginCard({
               value={sessionId}
               onChange={(e) => setSessionId(e.target.value)}
               placeholder="Cole aqui o cookie sessionid"
-              className="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-2.5 text-sm font-mono text-slate-900 outline-none transition focus:border-fuchsia-400 focus:bg-white focus:ring-2 focus:ring-fuchsia-100"
+              className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-base font-mono text-slate-900 outline-none transition focus:border-fuchsia-400 focus:bg-white focus:ring-2 focus:ring-fuchsia-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-fuchsia-500 dark:focus:bg-slate-800 dark:focus:ring-fuchsia-500/20"
             />
           </div>
         ) : (
@@ -182,7 +182,7 @@ export function InstagramLoginCard({
             <div>
               <label
                 htmlFor="ig-username"
-                className="block text-xs font-semibold text-slate-700"
+                className="block text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
                 Usuário (@username)
               </label>
@@ -194,18 +194,18 @@ export function InstagramLoginCard({
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="seu.usuario"
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-fuchsia-400 focus:bg-white focus:ring-2 focus:ring-fuchsia-100"
+                className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-fuchsia-400 focus:bg-white focus:ring-2 focus:ring-fuchsia-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-fuchsia-500 dark:focus:bg-slate-800 dark:focus:ring-fuchsia-500/20"
               />
             </div>
 
             <div>
               <label
                 htmlFor="ig-password"
-                className="block text-xs font-semibold text-slate-700"
+                className="block text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
                 Senha
               </label>
-              <div className="relative mt-1.5">
+              <div className="relative mt-2">
                 <input
                   id="ig-password"
                   type={showPassword ? "text" : "password"}
@@ -214,17 +214,17 @@ export function InstagramLoginCard({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-2.5 pl-3.5 pr-11 text-sm text-slate-900 outline-none transition focus:border-fuchsia-400 focus:bg-white focus:ring-2 focus:ring-fuchsia-100"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 py-3 pl-4 pr-12 text-base text-slate-900 outline-none transition focus:border-fuchsia-400 focus:bg-white focus:ring-2 focus:ring-fuchsia-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-fuchsia-500 dark:focus:bg-slate-800 dark:focus:ring-fuchsia-500/20"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
                   aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                  className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 transition hover:text-fuchsia-600"
+                  className="absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400 transition hover:text-fuchsia-600 dark:text-slate-500 dark:hover:text-fuchsia-400"
                 >
                   {showPassword ? (
                     <svg
-                      className="h-4 w-4"
+                      className="h-5 w-5"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -237,7 +237,7 @@ export function InstagramLoginCard({
                     </svg>
                   ) : (
                     <svg
-                      className="h-4 w-4"
+                      className="h-5 w-5"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -253,10 +253,10 @@ export function InstagramLoginCard({
             </div>
 
             {requires2fa && (
-              <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-3.5">
+              <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 dark:border-amber-800 dark:bg-amber-950/40">
                 <label
                   htmlFor="ig-2fa"
-                  className="block text-xs font-semibold text-amber-900"
+                  className="block text-sm font-semibold text-amber-900 dark:text-amber-200"
                 >
                   Código de verificação (2FA)
                 </label>
@@ -267,16 +267,16 @@ export function InstagramLoginCard({
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
                   placeholder="123456"
-                  className="mt-1.5 w-full rounded-xl border border-amber-300 bg-white px-3.5 py-2 text-sm font-mono tracking-widest text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
+                  className="mt-2 w-full rounded-xl border border-amber-300 bg-white px-4 py-2.5 text-base font-mono tracking-widest text-slate-900 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 dark:border-amber-700 dark:bg-slate-900 dark:text-white"
                 />
               </div>
             )}
 
             {requiresChallenge && (
-              <div className="rounded-2xl border border-fuchsia-200 bg-fuchsia-50/70 p-3.5">
+              <div className="rounded-2xl border border-fuchsia-200 bg-fuchsia-50/70 p-4 dark:border-fuchsia-800 dark:bg-fuchsia-950/40">
                 <label
                   htmlFor="ig-challenge"
-                  className="block text-xs font-semibold text-fuchsia-900"
+                  className="block text-sm font-semibold text-fuchsia-900 dark:text-fuchsia-200"
                 >
                   Código do Challenge (E-mail ou SMS)
                 </label>
@@ -287,7 +287,7 @@ export function InstagramLoginCard({
                   value={challengeCode}
                   onChange={(e) => setChallengeCode(e.target.value)}
                   placeholder="123456"
-                  className="mt-1.5 w-full rounded-xl border border-fuchsia-300 bg-white px-3.5 py-2 text-sm font-mono tracking-widest text-slate-900 outline-none focus:border-fuchsia-500 focus:ring-2 focus:ring-fuchsia-200"
+                  className="mt-2 w-full rounded-xl border border-fuchsia-300 bg-white px-4 py-2.5 text-base font-mono tracking-widest text-slate-900 outline-none focus:border-fuchsia-500 focus:ring-2 focus:ring-fuchsia-200 dark:border-fuchsia-700 dark:bg-slate-900 dark:text-white"
                 />
               </div>
             )}
@@ -297,7 +297,7 @@ export function InstagramLoginCard({
         <button
           type="submit"
           disabled={isLoggingIn}
-          className="mt-1 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-fuchsia-600 via-rose-500 to-amber-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-rose-500/25 transition hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-1 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-fuchsia-600 via-rose-500 to-amber-500 px-5 py-3.5 text-base font-semibold text-white shadow-md shadow-rose-500/25 transition hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoggingIn
             ? "Conectando e sincronizando..."

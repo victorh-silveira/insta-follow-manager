@@ -83,3 +83,35 @@ class AuthStatusDTO:
     username: str | None = None
     full_name: str | None = None
     profile_pic_url: str | None = None
+    biography: str | None = None
+    media_count: int | None = None
+    follower_count: int | None = None
+    following_count: int | None = None
+    is_private: bool | None = None
+    is_verified: bool = False
+
+
+@dataclass(frozen=True)
+class BucketCountDTO:
+    """Count of profiles grouped by a single alphabetical bucket."""
+
+    bucket: str
+    count: int
+
+
+@dataclass(frozen=True)
+class RelationshipAnalyticsDTO:
+    """Aggregated analytics computed from cached relationship profiles."""
+
+    total_cached: int
+    following_count: int
+    followers_count: int
+    mutual_count: int
+    non_followers_count: int
+    not_following_back_count: int
+    follow_back_rate: float
+    follower_following_ratio: float
+    verified_following_count: int
+    verified_followers_count: int
+    nameless_profiles_count: int
+    top_buckets: list[BucketCountDTO]

@@ -23,6 +23,12 @@ class AuthAccount:
     username: str | None = None
     full_name: str | None = None
     profile_pic_url: str | None = None
+    biography: str | None = None
+    media_count: int | None = None
+    follower_count: int | None = None
+    following_count: int | None = None
+    is_private: bool | None = None
+    is_verified: bool = False
 
 
 class InstagramGateway(ABC):

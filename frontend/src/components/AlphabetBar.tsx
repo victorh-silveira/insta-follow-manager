@@ -33,24 +33,24 @@ export function AlphabetBar({
         key={key}
         type="button"
         onClick={() => onSelectBucket(key)}
-        className={`flex items-center justify-center gap-1.5 rounded-xl border text-xs font-semibold transition ${
-          wide ? "px-3.5 py-2" : "h-9 min-w-[2.5rem] px-2"
+        className={`flex items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition ${
+          wide ? "px-4 py-2.5" : "h-11 min-w-[3.25rem] px-3"
         } ${
           isActive
-            ? "border-transparent bg-gradient-to-r from-fuchsia-600 via-rose-500 to-amber-500 text-white shadow-md shadow-rose-500/20"
+            ? "border-transparent bg-gradient-to-r from-fuchsia-600 via-rose-500 to-amber-500 text-white shadow-md shadow-rose-500/25"
             : isEmpty
-              ? "border-slate-100 bg-slate-50/80 text-slate-300 hover:border-slate-200 hover:text-slate-500"
-              : "border-slate-200 bg-white text-slate-700 hover:border-fuchsia-300 hover:bg-fuchsia-50/60 hover:text-fuchsia-800"
+              ? "border-slate-200/70 bg-slate-50 text-slate-400 hover:border-slate-300 hover:text-slate-600 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-600 dark:hover:border-slate-700 dark:hover:text-slate-400"
+              : "border-slate-200 bg-white text-slate-800 hover:border-fuchsia-300 hover:bg-fuchsia-50/70 hover:text-fuchsia-800 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:border-fuchsia-500/70 dark:hover:bg-slate-800 dark:hover:text-fuchsia-300"
         }`}
       >
         <span>{label}</span>
         <span
-          className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+          className={`rounded-full px-2 py-0.5 text-xs font-bold ${
             isActive
               ? "bg-white/25 text-white"
               : isEmpty
-                ? "text-slate-300"
-                : "bg-fuchsia-50 text-fuchsia-700"
+                ? "text-slate-400 dark:text-slate-600"
+                : "bg-fuchsia-50 text-fuchsia-700 dark:bg-fuchsia-950 dark:text-fuchsia-300"
           }`}
         >
           {count}
@@ -62,23 +62,23 @@ export function AlphabetBar({
   return (
     <section
       aria-label="Filtro alfabético por nome de exibição"
-      className="rounded-2xl border border-rose-100/80 bg-white/90 p-4 shadow-sm backdrop-blur-sm"
+      className="rounded-3xl border border-rose-200/70 bg-white/95 p-5 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90 sm:p-6"
     >
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <span className="text-xs font-bold uppercase tracking-wider text-fuchsia-700/80">
-          Filtrar por inicial do nome (A–Z, 0–9, Caracteres Especiais)
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <span className="text-sm font-bold uppercase tracking-wider text-fuchsia-700 dark:text-fuchsia-300">
+          Filtrar por inicial do nome (A–Z, 0–9, Especiais)
         </span>
         {selectedBucket !== "ALL" && (
           <button
             type="button"
             onClick={() => onSelectBucket("ALL")}
-            className="text-xs font-semibold text-rose-600 transition hover:text-rose-700 hover:underline"
+            className="text-sm font-semibold text-rose-600 transition hover:text-rose-700 hover:underline dark:text-rose-400 dark:hover:text-rose-300"
           >
             Ver todos ({totalInList})
           </button>
         )}
       </div>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         {renderButton("ALL", "Todos", totalInList, true)}
         {LETTER_BUCKETS.map((letter) =>
           renderButton(letter, letter, bucketCounts[letter] ?? 0)
@@ -91,7 +91,7 @@ export function AlphabetBar({
         )}
         {renderButton(
           SPECIAL_BUCKET,
-          "Caracteres Especiais",
+          "Especiais",
           bucketCounts[SPECIAL_BUCKET] ?? 0,
           true
         )}

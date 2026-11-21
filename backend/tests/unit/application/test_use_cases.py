@@ -308,3 +308,23 @@ def test_login_instagram_use_case_with_session_id() -> None:
     assert account.authenticated is True
     assert account.username == "session_user"
     assert gateway.last_session_id == "sid-xyz"
+
+
+def test_get_relationship_analytics_computes_kpis_and_top_buckets() -> None:
+    repo = InMemoryProfileRepository()
+    gateway = FakeInstagramGateway()
+    SyncRelationshipsUseCase(gateway, repo).execute()
+
+    from src.application.use_cases.get_relationship_analytics import GetRelationshipAnalyticsUseCase
+
+    analytics = GetRelationshipAnalyticsUseCase(repo).execute()
+
+    assert analytics.total_cached == 6
+    assert analytics.following_count == 5
+    assert analytics.followers_count == 2
+    assert analytics.mutual_count == 1
+    assert analytics.non_followers_count == 4
+    assert analytics.not_following_back_count == 1
+    assert analytics.follow_back_rate == 20.0
+    assert analytics.follower_following_ratio == 0.4
+    assert len(analytics.top_buckets) >= 1

@@ -7,6 +7,7 @@ from src.application.use_cases.auth_instagram import (
     LoginInstagramUseCase,
     LogoutInstagramUseCase,
 )
+from src.application.use_cases.get_relationship_analytics import GetRelationshipAnalyticsUseCase
 from src.application.use_cases.list_profiles_by_bucket import ListProfilesByBucketUseCase
 from src.application.use_cases.remove_follower import RemoveFollowerUseCase
 from src.application.use_cases.sync_relationships import SyncRelationshipsUseCase
@@ -52,6 +53,10 @@ def get_sync_use_case() -> SyncRelationshipsUseCase:
 
 def get_list_profiles_use_case() -> ListProfilesByBucketUseCase:
     return ListProfilesByBucketUseCase(get_profile_repository())
+
+
+def get_analytics_use_case() -> GetRelationshipAnalyticsUseCase:
+    return GetRelationshipAnalyticsUseCase(get_profile_repository())
 
 
 def get_unfollow_use_case() -> UnfollowProfileUseCase:

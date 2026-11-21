@@ -270,3 +270,24 @@ def test_login_with_session_id_and_challenge_code(client: TestClient) -> None:
     )
     assert challenge_resp.status_code == 200
     assert challenge_resp.json()["authenticated"] is True
+
+
+def test_relationships_analytics_endpoint_returns_dashboard_metrics(client: TestClient) -> None:
+    client.post("/api/relationships/sync")
+
+    resp = client.get("/api/relationships/analytics")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["total_cached"] > 0
+    assert body["following_count"] > 0
+    assert body["followers_count"] > 0
+    assert body["mutual_count"] > 0
+    assert body["follow_back_rate"] > 0
+    assert body["follower_following_ratio"] > 0
+    assert len(body["top_buckets"]) > 0
+
+    auth_resp = client.get("/api/auth/status")
+    assert auth_resp.status_code == 200
+    auth_body = auth_resp.json()
+    assert auth_body["media_count"] == 42
+    assert auth_body["is_verified"] is True
